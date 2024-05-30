@@ -35,7 +35,13 @@ ch_multiqc_custom_methods_description = params.multiqc_methods_description ? fil
 //
 // SUBWORKFLOW: Consisting of a mix of local and nf-core/modules
 //
-include { INPUT_CHECK } from '../subworkflows/local/input_check'
+include { INPUT_CHECK   } from '../subworkflows/local/input_check'
+include { MAKE_SEURAT   } from '../modules/local/makeseurat.nf'
+include { NORMALIZE_QC  } from '../modules/local/normalize_qc.nf'
+include { FIND_DOUBLETS } from '../modules/local/doubletfinder.nf'
+include { MERGE_SO      } from '../modules/local/merge.nf'
+include { RUN_PCA       } from '../modules/local/runpca.nf'
+include { INTEGRATION   } from '../modules/local/integration.nf'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -62,6 +68,9 @@ def multiqc_report = []
 workflow SCSCAPE {
 
     ch_versions = Channel.empty()
+
+    ch_refs      = Channel
+                  .fromSamplesheet("sample_sheet")
 
     //
     // SUBWORKFLOW: Read in samplesheet, validate and stage input files
