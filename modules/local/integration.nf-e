@@ -1,4 +1,4 @@
-process RUN_PCA {
+process INTEGRATION {
 
     tag "${meta.group}"
     label 'process_medium'
@@ -10,11 +10,11 @@ process RUN_PCA {
 
     input:
     tuple val(meta), path (rds)
-    val pcMax
-
+    val integration_method
+    
     output:
-    tuple val(meta), path ("*_PCA.rds"), emit: rds
-    path("*.validation.log"),           emit: log
+    tuple val(meta), path ("*_Integrated.rds"), emit: rds
+    path("*validation.log"),           emit: log
     //path ("versions.yml"),            emit: versions
 
     when:
@@ -23,9 +23,9 @@ process RUN_PCA {
     script:
     def args = task.ext.args  ?: ''
     """
-    RunPCA.R \\
+    Integration.R \\
         $rds \\
-        $pcMax \\
+        $integration_method \\
         ${meta.group} \\
         ${args}      
 

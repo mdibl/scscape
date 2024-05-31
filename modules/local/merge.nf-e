@@ -1,4 +1,4 @@
-process RUN_PCA {
+process MERGE_SO {
 
     tag "${meta.group}"
     label 'process_medium'
@@ -9,12 +9,12 @@ process RUN_PCA {
         'docker.io/mdiblbiocore/seurat:latest' }"
 
     input:
-    tuple val(meta), path (rds)
-    val pcMax
+    tuple val(meta), path (rds_files)
+    val vars_2_regress
 
     output:
-    tuple val(meta), path ("*_PCA.rds"), emit: rds
-    path("*.validation.log"),           emit: log
+    tuple val(meta), path ("*Merged_SO.rds"), emit: rds
+    path("*validation.log"),           emit: log
     //path ("versions.yml"),            emit: versions
 
     when:
@@ -23,10 +23,9 @@ process RUN_PCA {
     script:
     def args = task.ext.args  ?: ''
     """
-    RunPCA.R \\
-        $rds \\
-        $pcMax \\
-        ${meta.group} \\
+    Merge.R \\
+        ${Meta.group} \\
+        $vars_2_regress \\
         ${args}      
 
     //cat <<-END_VERSIONS > versions.yml

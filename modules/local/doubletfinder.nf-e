@@ -1,6 +1,6 @@
-process RUN_PCA {
+process FIND_DOUBLETS {
 
-    tag "${meta.group}"
+    tag "${meta.id}"
     label 'process_medium'
 
     conda "conda-forge::python=3.9.5"
@@ -10,10 +10,12 @@ process RUN_PCA {
 
     input:
     tuple val(meta), path (rds)
-    val pcMax
+    tuple val(meta), path (data_directory)
+    val vars_2_regress
+    
 
     output:
-    tuple val(meta), path ("*_PCA.rds"), emit: rds
+    tuple val(meta), path ("*_DoubletsRemoved.rds"), emit: rds
     path("*.validation.log"),           emit: log
     //path ("versions.yml"),            emit: versions
 
@@ -23,10 +25,11 @@ process RUN_PCA {
     script:
     def args = task.ext.args  ?: ''
     """
-    RunPCA.R \\
+    DoubletFinder.R \\
         $rds \\
-        $pcMax \\
-        ${meta.group} \\
+        $vars_2_regress \\
+        $data_directory \\
+        ${meta.id} \\
         ${args}      
 
     //cat <<-END_VERSIONS > versions.yml

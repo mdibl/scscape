@@ -1,6 +1,6 @@
-process RUN_PCA {
+process MAKE_SEURAT {
 
-    tag "${meta.group}"
+    tag "${meta.id}"
     label 'process_medium'
 
     conda "conda-forge::python=3.9.5"
@@ -9,11 +9,14 @@ process RUN_PCA {
         'docker.io/mdiblbiocore/seurat:latest' }"
 
     input:
-    tuple val(meta), path (rds)
-    val pcMax
+    tuple val(meta), path (data_directory)
+    tuple val(meta), path (genes_2_rm)
+    val min_cells
+    val min_features
+    val gene_identifier
 
     output:
-    tuple val(meta), path ("*_PCA.rds"), emit: rds
+    tuple val(meta), path ("*_SO.rds"), emit: rds
     path("*.validation.log"),           emit: log
     //path ("versions.yml"),            emit: versions
 
@@ -23,10 +26,14 @@ process RUN_PCA {
     script:
     def args = task.ext.args  ?: ''
     """
-    RunPCA.R \\
-        $rds \\
-        $pcMax \\
+    MakeSeurat.R \\
+        $data_directory \\
+        $gene_identifier \\
+        $genes_2_rm \\
+        ${meta.id} \\
         ${meta.group} \\
+        $min_cells \\
+        $min_features \\
         ${args}      
 
     //cat <<-END_VERSIONS > versions.yml

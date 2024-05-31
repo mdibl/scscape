@@ -1,6 +1,6 @@
-process RUN_PCA {
+process FIND_NN_CLUSTER {
 
-    tag "${meta.group}"
+    tag "${meta.id}"
     label 'process_medium'
 
     conda "conda-forge::python=3.9.5"
@@ -10,12 +10,14 @@ process RUN_PCA {
 
     input:
     tuple val(meta), path (rds)
-    val pcMax
+    path validation_log
+    val resolutions
+    val integration_method
 
     output:
-    tuple val(meta), path ("*_PCA.rds"), emit: rds
-    path("*.validation.log"),           emit: log
-    //path ("versions.yml"),            emit: versions
+    tuple val(meta), path ("*_Clustered.rds"), emit: rds
+    path("*validation.log"),                   emit: log
+    //path ("versions.yml"),                   emit: versions
 
     when:
     task.ext.when == null || task.ext.when
@@ -23,9 +25,13 @@ process RUN_PCA {
     script:
     def args = task.ext.args  ?: ''
     """
-    RunPCA.R \\
-        $rds \\
-        $pcMax \\
+    pcMax=\$(paste -s  <(grep PC $validation_log| grep -E -o "[0-9]") | sed 's|\t||')    
+
+    FindNeighborsClustersMarkers.R \\
+        $rds\\
+        $resolutions \\
+        \$pcMax \\
+        $integration \\
         ${meta.group} \\
         ${args}      
 
