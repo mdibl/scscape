@@ -283,10 +283,10 @@
             "type": "string"
         },
         "min_cells": {
-            "type": "string"
+            "type": "integer"
         },
         "min_features": {
-            "type": "string"
+            "type": "integer"
         },
         "nfeature_lower": {
             "type": "string"
