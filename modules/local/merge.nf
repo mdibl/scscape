@@ -1,7 +1,7 @@
 process MERGE_SO {
 
-    tag "${meta.group}"
-    label 'process_medium'
+    tag "${meta}"
+    label 'process_small'
 
     conda "conda-forge::python=3.9.5"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
@@ -15,23 +15,24 @@ process MERGE_SO {
     output:
     tuple val(meta), path ("*Merged_SO.rds"), emit: rds
     path("*validation.log"),           emit: log
+    path("*.pdf")
     //path ("versions.yml"),            emit: versions
 
     when:
     task.ext.when == null || task.ext.when
 
     script:
+    def n_features = task.ext.args2 ?: 'ALL'
+    def scale_method = task.ext.args3 ?: 'SCT'
     def args = task.ext.args  ?: ''
     """
     Merge.R \\
-        ${Meta.group} \\
+        ${meta} \\
         $vars_2_regress \\
-        ${args}      
+        $n_features \\
+        $scale_method \\
+        ${args}
 
-    //cat <<-END_VERSIONS > versions.yml
-    //"${task.process}":
-        //Seurat: \$(echo \$( version) | sed "s/, version //g" )
-    //END_VERSIONS
     """
 
     stub:
@@ -42,4 +43,4 @@ process MERGE_SO {
     END_VERSIONS
     """
 
-} 
+}

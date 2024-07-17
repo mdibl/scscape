@@ -1,7 +1,7 @@
 process NORMALIZE_QC {
 
     tag "${meta.id}"
-    label 'process_medium'
+    label 'process_small'
 
     conda "conda-forge::python=3.9.5"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
@@ -16,11 +16,11 @@ process NORMALIZE_QC {
     val ncount_lower
     val ncount_upper
     val max_mito_pct
-    
+
 
     output:
-    tuple val(meta), path ("*_QC.rds"), emit: rds
-    path("*.validation.log"),           emit: log
+    tuple val(meta), path ("*_QC.rds"),        emit: rds
+    tuple val(meta), path("*.validation.log"), emit: log
     //path ("versions.yml"),            emit: versions
 
     when:
@@ -28,6 +28,9 @@ process NORMALIZE_QC {
 
     script:
     def args = task.ext.args  ?: ''
+    if (mito_genes.getClass().name == "nextflow.util.BlankSeparatedList") {
+        mito_genes = 'NULL'
+    }
     """
     Normalize_QC.R \\
         $mito_genes \\
@@ -38,12 +41,12 @@ process NORMALIZE_QC {
         $max_mito_pct \\
         $rds \\
         ${meta.id} \\
-        ${args}      
+        ${args}
 
-    //cat <<-END_VERSIONS > versions.yml
-    //"${task.process}":
-        //Seurat: \$(echo \$( version) | sed "s/, version //g" )
-    //END_VERSIONS
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        Seurat: \$(echo \$( version) | sed "s/, version //g" )
+    END_VERSIONS
     """
 
     stub:
@@ -54,4 +57,4 @@ process NORMALIZE_QC {
     END_VERSIONS
     """
 
-} 
+}

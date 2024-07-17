@@ -16,9 +16,9 @@ process MAKE_SEURAT {
     val gene_identifier
 
     output:
-    tuple val(meta), path ("*_SO.rds"), emit: rds
-    path("*.validation.log"),           emit: log
-    path ("versions.yml"),            emit: versions
+    tuple val(meta), path ("*_SO.rds"),        emit: rds
+    tuple val(meta), path("*_Validation.log"), emit: log
+    path ("versions.yml"),                     emit: versions
 
     when:
     task.ext.when == null || task.ext.when
@@ -34,10 +34,12 @@ process MAKE_SEURAT {
         $gene_identifier \\
         $genes_2_rm \\
         ${meta.id} \\
-        ${meta.group} \\
+        "${meta.groups}" \\
         $min_cells \\
         $min_features \\
         ${args}
+
+    perl -i -pe 's/"//g;s/\\[\\d\\d?\\d?\\] //g' fileName.log *_Validation.log
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

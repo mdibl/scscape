@@ -1,7 +1,7 @@
 process RUN_PCA {
 
-    tag "${meta.group}"
-    label 'process_medium'
+    tag "${meta}"
+    label 'process_small'
 
     conda "conda-forge::python=3.9.5"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
@@ -10,29 +10,26 @@ process RUN_PCA {
 
     input:
     tuple val(meta), path (rds)
-    val pcMax
 
     output:
     tuple val(meta), path ("*_PCA.rds"), emit: rds
-    path("*.validation.log"),           emit: log
+    tuple val(meta), path("*.validation.log"),           emit: log
+    path("*.pdf")
     //path ("versions.yml"),            emit: versions
 
     when:
     task.ext.when == null || task.ext.when
 
     script:
-    def args = task.ext.args  ?: ''
+    def pcMax = task.ext.args  ?: 'null'
+    def args  = task.ext.args2  ?: ''
     """
     RunPCA.R \\
         $rds \\
-        $pcMax \\
-        ${meta.group} \\
-        ${args}      
+        ${pcMax} \\
+        ${meta} \\
+        ${args}
 
-    //cat <<-END_VERSIONS > versions.yml
-    //"${task.process}":
-        //Seurat: \$(echo \$( version) | sed "s/, version //g" )
-    //END_VERSIONS
     """
 
     stub:
@@ -43,4 +40,4 @@ process RUN_PCA {
     END_VERSIONS
     """
 
-} 
+}

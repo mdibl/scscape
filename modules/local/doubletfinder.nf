@@ -1,7 +1,7 @@
 process FIND_DOUBLETS {
 
     tag "${meta.id}"
-    label 'process_medium'
+    label 'process_small'
 
     conda "conda-forge::python=3.9.5"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
@@ -12,11 +12,12 @@ process FIND_DOUBLETS {
     tuple val(meta), path (rds)
     tuple val(meta), path (data_directory)
     val vars_2_regress
-    
+
 
     output:
-    tuple val(meta), path ("*_DoubletsRemoved.rds"), emit: rds
-    path("*.validation.log"),           emit: log
+    tuple val(meta), path ("*_DoubletsRemoved.rds"),     emit: rds
+    tuple val(meta), path("*.validation.log"),           emit: log
+    path("*.pdf")
     //path ("versions.yml"),            emit: versions
 
     when:
@@ -30,12 +31,8 @@ process FIND_DOUBLETS {
         $vars_2_regress \\
         $data_directory \\
         ${meta.id} \\
-        ${args}      
+        ${args}
 
-    //cat <<-END_VERSIONS > versions.yml
-    //"${task.process}":
-        //Seurat: \$(echo \$( version) | sed "s/, version //g" )
-    //END_VERSIONS
     """
 
     stub:
@@ -46,4 +43,4 @@ process FIND_DOUBLETS {
     END_VERSIONS
     """
 
-} 
+}

@@ -1,6 +1,6 @@
-process FIND_NN_CLUSTER {
+process DISPLAY_REDUCTION {
 
-    tag "${meta.group}"
+    tag "${meta}"
     label 'process_small'
 
     conda "conda-forge::python=3.9.5"
@@ -9,38 +9,44 @@ process FIND_NN_CLUSTER {
         'docker.io/mdiblbiocore/seurat:latest' }"
 
     input:
-    tuple val(meta), path (rds)
-    tuple val(meta), path (validation_log)
+    tuple val(meta), path (rds_file)
+    tuple val(meta), path(validation_log)
+    val integrated
     val resolutions
+    val makeLoupe
     val integration_tool
 
+
+
     output:
-    tuple val(meta), path ("*_Clustered.rds"), emit: rds
-    tuple val(meta), path("*validation.log"),                   emit: log
-    path("markers")
+    tuple val(meta), path ("*Final.rds"), emit: rds
+    path("*validation.log"),           emit: log
+    path("*.loupe")
     path("*.pdf")
-    //path ("versions.yml"),                   emit: versions
+    //path ("versions.yml"),            emit: versions
 
     when:
     task.ext.when == null || task.ext.when
 
     script:
-    if (meta.integrated) {
+    if (integrated) {
         integration_method = integration_tool
     } else {
         integration_method = "NULL"
     }
-    def args = task.ext.args ?: ''
+    def args = task.ext.args1  ?: 'NULL'
     """
     pcMax=\$(paste -s  <(grep PC $validation_log| grep -E -o "[0-9]") | sed 's|\\t||')
 
-    FindNeighborsClustersMarkers.R \\
-        $rds\\
-        $resolutions \\
-        \$pcMax \\
-        ${integration_method} \\
-        ${meta.group} \\
+    Plotting.R \
+        $rds_file \
+        $resolutions \
+        \$pcMax \
+        $integration_method \
+        $meta \
+        $makeLoupe \
         ${args}
+
     """
 
     stub:

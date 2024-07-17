@@ -1,7 +1,7 @@
 process INTEGRATION {
 
-    tag "${meta.group}"
-    label 'process_medium'
+    tag "${meta}"
+    label 'process_small'
 
     conda "conda-forge::python=3.9.5"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
@@ -11,10 +11,10 @@ process INTEGRATION {
     input:
     tuple val(meta), path (rds)
     val integration_method
-    
+
     output:
     tuple val(meta), path ("*_Integrated.rds"), emit: rds
-    path("*validation.log"),           emit: log
+    tuple val(meta), path("*validation.log"),           emit: log
     //path ("versions.yml"),            emit: versions
 
     when:
@@ -26,13 +26,9 @@ process INTEGRATION {
     Integration.R \\
         $rds \\
         $integration_method \\
-        ${meta.group} \\
-        ${args}      
+        ${meta} \\
+        ${args}
 
-    //cat <<-END_VERSIONS > versions.yml
-    //"${task.process}":
-        //Seurat: \$(echo \$( version) | sed "s/, version //g" )
-    //END_VERSIONS
     """
 
     stub:
@@ -43,4 +39,4 @@ process INTEGRATION {
     END_VERSIONS
     """
 
-} 
+}

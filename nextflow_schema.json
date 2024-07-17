@@ -289,19 +289,19 @@
             "type": "integer"
         },
         "nfeature_lower": {
-            "type": "string"
+            "type": "integer"
         },
         "nfeature_upper": {
-            "type": "string"
+            "type": "integer"
         },
         "ncount_lower": {
-            "type": "string"
+            "type": "integer"
         },
         "ncount_upper": {
-            "type": "string"
+            "type": "integer"
         },
         "max_mito_pct": {
-            "type": "string"
+            "type": "integer"
         },
         "vars_2_regress": {
             "type": "string"
