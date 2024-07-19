@@ -124,18 +124,22 @@ workflow SCSCAPE {
         params.min_features,
         params.gene_identifier
     )
-    ch_normalized_qc_rds = NORMALIZE_QC (
-        ch_init_rds.rds,
-        ch_updated_meta.map { [it[0], it[3]] },
+    ch_init_rds.rds.join(ch_updated_meta).set { ch_init_rds }
+
+    ch_normalized_qc = NORMALIZE_QC (
+        ch_init_rds.map { [it[0], it[1]] },
+        ch_init_rds.map { [it[0], it[4]] },
         params.nfeature_lower,
         params.nfeature_upper,
         params.ncount_lower,
         params.ncount_upper,
         params.max_mito_pct
     )
+    ch_normalized_qc.rds.join(ch_updated_meta).set { ch_normalized_qc }
+
     ch_doublet_filtered_rds = FIND_DOUBLETS (
-        ch_normalized_qc_rds.rds,
-        ch_updated_meta.map { [it[0], it[1]] },
+        ch_normalized_qc.map { [it[0], it[1]] },
+        ch_normalized_qc.map { [it[0], it[2]] },
         params.vars_2_regress
     )
 
