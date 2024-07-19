@@ -21,6 +21,7 @@ process NORMALIZE_QC {
     output:
     tuple val(meta), path ("*_QC.rds"),        emit: rds
     tuple val(meta), path("*.validation.log"), emit: log
+    path("*.pdf")
     //path ("versions.yml"),            emit: versions
 
     when:
