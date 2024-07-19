@@ -17,7 +17,7 @@ process MAKE_SEURAT {
 
     output:
     tuple val(meta), path ("*_SO.rds"),        emit: rds
-    tuple val(meta), path("*_Validation.log"), emit: log
+    tuple val(meta), path("*Validation.log"), emit: log
     path ("versions.yml"),                     emit: versions
 
     when:
