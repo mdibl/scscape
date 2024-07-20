@@ -21,7 +21,7 @@ process DISPLAY_REDUCTION {
     output:
     tuple val(meta), path ("*Final.rds"), emit: rds
     path("*validation.log"),           emit: log
-    path("*.loupe")
+    path("*.cloupe")
     path("*.pdf")
     //path ("versions.yml"),            emit: versions
 
@@ -38,7 +38,7 @@ process DISPLAY_REDUCTION {
     """
     pcMax=\$(paste -s  <(grep PC $validation_log| grep -E -o "[0-9]") | sed 's|\\t||')
 
-    Plotting.R \
+    yes | Plotting.R \
         $rds_file \
         $resolutions \
         \$pcMax \
