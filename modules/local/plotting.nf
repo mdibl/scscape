@@ -38,7 +38,7 @@ process DISPLAY_REDUCTION {
     """
     pcMax=\$(paste -s  <(grep PC $validation_log| grep -E -o "[0-9]") | sed 's|\\t||')
 
-    yes | Plotting.R \
+    Plotting.R \
         $rds_file \
         $resolutions \
         \$pcMax \
