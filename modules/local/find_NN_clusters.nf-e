@@ -6,7 +6,7 @@ process FIND_NN_CLUSTER {
     conda "conda-forge::python=3.9.5"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
         'https://depot.galaxyproject.org/singularity/python:3.9--1' :
-        'docker.io/mdiblbiocore/seurat:latest' }"
+        'docker.io/mdiblbiocore/seurat:v2.1.0' }"
 
     input:
     tuple val(meta), path (rds)
@@ -25,7 +25,7 @@ process FIND_NN_CLUSTER {
     script:
     def args = task.ext.args  ?: ''
     """
-    pcMax=\$(paste -s  <(grep PC $validation_log| grep -E -o "[0-9]") | sed 's|\t||')    
+    pcMax=\$(paste -s  <(grep PC $validation_log| grep -E -o "[0-9]") | sed 's|\t||')
 
     FindNeighborsClustersMarkers.R \\
         $rds\\
@@ -33,7 +33,7 @@ process FIND_NN_CLUSTER {
         \$pcMax \\
         $integration \\
         ${meta.group} \\
-        ${args}      
+        ${args}
 
     //cat <<-END_VERSIONS > versions.yml
     //"${task.process}":
@@ -49,4 +49,4 @@ process FIND_NN_CLUSTER {
     END_VERSIONS
     """
 
-} 
+}

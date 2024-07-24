@@ -6,13 +6,13 @@ process FIND_DOUBLETS {
     conda "conda-forge::python=3.9.5"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
         'https://depot.galaxyproject.org/singularity/python:3.9--1' :
-        'docker.io/mdiblbiocore/seurat:latest' }"
+        'docker.io/mdiblbiocore/seurat:v2.1.0' }"
 
     input:
     tuple val(meta), path (rds)
     tuple val(meta), path (data_directory)
     val vars_2_regress
-    
+
 
     output:
     tuple val(meta), path ("*_DoubletsRemoved.rds"), emit: rds
@@ -30,7 +30,7 @@ process FIND_DOUBLETS {
         $vars_2_regress \\
         $data_directory \\
         ${meta.id} \\
-        ${args}      
+        ${args}
 
     //cat <<-END_VERSIONS > versions.yml
     //"${task.process}":
@@ -46,4 +46,4 @@ process FIND_DOUBLETS {
     END_VERSIONS
     """
 
-} 
+}

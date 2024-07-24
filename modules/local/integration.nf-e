@@ -6,12 +6,12 @@ process INTEGRATION {
     conda "conda-forge::python=3.9.5"
     container "${ workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container ?
         'https://depot.galaxyproject.org/singularity/python:3.9--1' :
-        'docker.io/mdiblbiocore/seurat:latest' }"
+        'docker.io/mdiblbiocore/seurat:v2.1.0' }"
 
     input:
     tuple val(meta), path (rds)
     val integration_method
-    
+
     output:
     tuple val(meta), path ("*_Integrated.rds"), emit: rds
     path("*validation.log"),           emit: log
@@ -27,7 +27,7 @@ process INTEGRATION {
         $rds \\
         $integration_method \\
         ${meta.group} \\
-        ${args}      
+        ${args}
 
     //cat <<-END_VERSIONS > versions.yml
     //"${task.process}":
@@ -43,4 +43,4 @@ process INTEGRATION {
     END_VERSIONS
     """
 
-} 
+}
