@@ -19,8 +19,8 @@ process DISPLAY_REDUCTION {
 
 
     output:
-    tuple val(meta), path ("*Final.rds"), emit: rds
-    path("*validation.log"),           emit: log
+    tuple val(meta), path ("*_FinalSO.rds"), emit: rds
+    path("*Validation.log"),           emit: log
     path("*.cloupe")
     path("*.pdf")
     //path ("versions.yml"),            emit: versions
@@ -36,7 +36,7 @@ process DISPLAY_REDUCTION {
     }
     def args = task.ext.args1  ?: 'NULL'
     """
-    pcMax=\$(paste -s  <(grep PC $validation_log| grep -E -o "[0-9]") | sed 's|\\t||')
+    pcMax=\$(grep -i -E "^PCs used" $validation_log | perl -pe "s/^PCs.*- //g")
 
     Plotting.R \
         $rds_file \

@@ -13,8 +13,8 @@ process INTEGRATION {
     val integration_method
 
     output:
-    tuple val(meta), path ("*_Integrated.rds"), emit: rds
-    tuple val(meta), path("*validation.log"),           emit: log
+    tuple val(meta), path ("*_IntegrateSO.rds"), emit: rds
+    tuple val(meta), path("*Validation.log"),           emit: log
     //path ("versions.yml"),            emit: versions
 
     when:
@@ -22,11 +22,13 @@ process INTEGRATION {
 
     script:
     def args = task.ext.args  ?: ''
+    def scale_method = task.ext.args2 ?: 'SCT'
     """
     Integration.R \\
         $rds \\
         $integration_method \\
         ${meta} \\
+        $scale_method \\
         ${args}
 
     """

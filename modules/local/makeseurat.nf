@@ -26,7 +26,7 @@ process MAKE_SEURAT {
     script:
     def args = task.ext.args  ?: ''
     if (genes_2_rm.getClass().name == "nextflow.util.BlankSeparatedList") {
-        genes_2_rm = 'null'
+        genes_2_rm = 'NULL'
     }
     """
     MakeSeurat.R \\

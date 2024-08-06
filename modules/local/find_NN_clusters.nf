@@ -15,8 +15,8 @@ process FIND_NN_CLUSTER {
     val integration_tool
 
     output:
-    tuple val(meta), path ("*_Clustered.rds"), emit: rds
-    tuple val(meta), path("*validation.log"),                   emit: log
+    tuple val(meta), path ("*_ClusterSO.rds"), emit: rds
+    tuple val(meta), path("*Validation.log"),                   emit: log
     path("markers")
     path("*.pdf")
     //path ("versions.yml"),                   emit: versions
@@ -31,15 +31,18 @@ process FIND_NN_CLUSTER {
         integration_method = "NULL"
     }
     def args = task.ext.args ?: ''
+    def scale_method = task.ext.args2 ?: 'SCT'
     """
-    pcMax=\$(paste -s  <(grep PC $validation_log| grep -E -o "[0-9]") | sed 's|\\t||')
+    pcMax=\$(grep -i -E "^PCs used" $validation_log | perl -pe "s/^PCs.*- //g")
 
+    echo \$pcMax
     FindNeighborsClustersMarkers.R \\
-        $rds\\
+        $rds \\
         $resolutions \\
         \$pcMax \\
         ${integration_method} \\
         ${meta.group} \\
+        $scale_method \\
         ${args}
     """
 

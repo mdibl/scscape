@@ -13,8 +13,8 @@ process MERGE_SO {
     val vars_2_regress
 
     output:
-    tuple val(meta), path ("*Merged_SO.rds"), emit: rds
-    path("*validation.log"),           emit: log
+    tuple val(meta), path ("*_MergedSO.rds"), emit: rds
+    path("*Validation.log"),           emit: log
     path("*.pdf")
     //path ("versions.yml"),            emit: versions
 
@@ -22,8 +22,8 @@ process MERGE_SO {
     task.ext.when == null || task.ext.when
 
     script:
-    def n_features = task.ext.args2 ?: 'ALL'
-    def scale_method = task.ext.args3 ?: 'SCT'
+    def n_features = task.ext.args2 ?: 'NULL'
+    def scale_method = task.ext.args3 ?: 'NULL'
     def args = task.ext.args  ?: ''
     """
     Merge.R \\

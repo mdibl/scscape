@@ -75,8 +75,8 @@ workflow SCSCAPE {
     ch_versions = Channel.empty()
 
     ch_samples = Channel.fromList(samplesheetToList(params.sample_sheet, "./assets/schema_input.json"))
-    ch_contrasts_file = Channel.from(file(params.contrast_sheet))
-    ch_contrasts_file.splitCsv ( header:true, sep:(params.contrast_sheet.endsWith('tsv') ? '\t' : ','))
+    ch_contrasts_file = Channel.from(file(params.segmentation_sheet))
+    ch_contrasts_file.splitCsv ( header:true, sep:(params.segmentation_sheet.endsWith('tsv') ? '\t' : ','))
                     .flatMap().filter { !(it.toString().toUpperCase().contains("FALSE")) }
                     .map { it ->
                         if (it.toString().contains("id")){
@@ -117,6 +117,7 @@ workflow SCSCAPE {
                 .map { it.reverse() }
                 .set { ch_updated_meta }
 
+    //ch_updated_meta.view()
     ch_init_rds = MAKE_SEURAT (
         ch_updated_meta.map { [it[0], it[1]] },
         ch_updated_meta.map { [it[0], it[2]] },
@@ -128,12 +129,13 @@ workflow SCSCAPE {
 
     ch_normalized_qc = NORMALIZE_QC (
         ch_init_rds.map { [it[0], it[1]] },
-        ch_init_rds.map { [it[0], it[4]] },
+        ch_init_rds.map { [it[0], it[3]] },
         params.nfeature_lower,
         params.nfeature_upper,
         params.ncount_lower,
         params.ncount_upper,
-        params.max_mito_pct
+        params.max_mito_pct,
+        params.vars_2_regress
     )
     ch_normalized_qc.rds.join(ch_updated_meta).set { ch_normalized_qc }
 
@@ -230,9 +232,11 @@ workflow SCSCAPE {
         params.integration_method
     )
 
+
     ch_nn_clusters.rds.map { meta, rds -> [ meta.group, meta.integrated, rds ] }
-                        .join( ch_pca_multiple.log, by: [0, 0])
+                        .join( ch_pca_multiple.log, by: [0, 0], remainder: true)
                         .join( ch_pca_single.log, by: [0, 0], remainder: true)
+                        .map { list -> list.findAll { it != null }}
                         .set { ch_nn_clusters_w_log }
 
     ch_nn_clusters_w_log.view()

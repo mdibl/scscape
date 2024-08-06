@@ -15,8 +15,8 @@ process FIND_DOUBLETS {
 
 
     output:
-    tuple val(meta), path ("*_DoubletsRemoved.rds"),     emit: rds
-    tuple val(meta), path("*.validation.log"),           emit: log
+    tuple val(meta), path ("*_DoubletsRmSO.rds"),     emit: rds
+    tuple val(meta), path("*Validation.log"),           emit: log
     path("*.pdf")
     //path ("versions.yml"),            emit: versions
 
@@ -24,6 +24,8 @@ process FIND_DOUBLETS {
     task.ext.when == null || task.ext.when
 
     script:
+    def n_features = task.ext.args2 ?: 'NULL'
+    def scale_method = task.ext.args3 ?: 'NULL'
     def args = task.ext.args  ?: ''
     """
     DoubletFinder.R \\
@@ -31,6 +33,8 @@ process FIND_DOUBLETS {
         $vars_2_regress \\
         $data_directory \\
         ${meta.id} \\
+        $n_features \\
+        $scale_method \\
         ${args}
 
     """

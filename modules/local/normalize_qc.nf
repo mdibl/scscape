@@ -10,17 +10,18 @@ process NORMALIZE_QC {
 
     input:
     tuple val(meta), path (rds)
-    tuple val(meta), path (mito_genes)
+    tuple val(meta), path (mt_cc_genes)
     val nfeature_lower
     val nfeature_upper
     val ncount_lower
     val ncount_upper
     val max_mito_pct
+    val vars_2_regress
 
 
     output:
-    tuple val(meta), path ("*_QC.rds"),        emit: rds
-    tuple val(meta), path("*.validation.log"), emit: log
+    tuple val(meta), path ("*_NormQCSO.rds"),        emit: rds
+    tuple val(meta), path("*Validation.log"), emit: log
     path("*.pdf")
     //path ("versions.yml"),            emit: versions
 
@@ -29,12 +30,21 @@ process NORMALIZE_QC {
 
     script:
     def args = task.ext.args  ?: ''
-    if (mito_genes.getClass().name == "nextflow.util.BlankSeparatedList") {
-        mito_genes = 'NULL'
+    if (mt_cc_genes.getClass().name == "nextflow.util.BlankSeparatedList") {
+        mt_cc_genes = 'NULL'
+    }
+    if (vars_2_regress.toUpperCase().contains("S.SCORE") && vars_2_regress.toUpperCase().contains("G2M.SCORE")) {
+        run_cc_score = "true"
+    } else if (vars_2_regress.toUpperCase().contains("S.SCORE") && !(vars_2_regress.toUpperCase().contains("G2M.SCORE"))){
+        throw new IllegalArgumentException("Only 1 cell cycle variable in regressed features, please include both G2M.Score, S.Score, or neither.")
+    } else if (!(vars_2_regress.toUpperCase().contains("S.SCORE")) && vars_2_regress.toUpperCase().contains("G2M.SCORE")){
+        throw new IllegalArgumentException("Only 1 cell cycle variable in regressed features, please include both G2M.Score, S.Score, or neither.")
+    } else {
+        run_cc_score = "false"
     }
     """
     Normalize_QC.R \\
-        $mito_genes \\
+        $mt_cc_genes \\
         $nfeature_lower \\
         $nfeature_upper \\
         $ncount_lower \\
@@ -42,12 +52,9 @@ process NORMALIZE_QC {
         $max_mito_pct \\
         $rds \\
         ${meta.id} \\
+        $run_cc_score \\
         ${args}
 
-    cat <<-END_VERSIONS > versions.yml
-    "${task.process}":
-        Seurat: \$(echo \$( version) | sed "s/, version //g" )
-    END_VERSIONS
     """
 
     stub:

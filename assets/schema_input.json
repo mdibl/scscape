@@ -15,11 +15,7 @@
                 "type": "string",
                 "format": "directory-path"
             },
-            "features_2_rm": {
-                "type": "string",
-                "format": "file-path"
-            },
-            "mito_genes": {
+            "mt_cc_rm_genes": {
                 "type": "string",
                 "format": "file-path"
             }
