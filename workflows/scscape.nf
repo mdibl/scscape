@@ -47,6 +47,7 @@ include { RUN_PCA as PCA_SING  } from '../modules/local/runpca.nf'
 include { INTEGRATION          } from '../modules/local/integration.nf'
 include { FIND_NN_CLUSTER      } from '../modules/local/find_NN_clusters.nf'
 include { DISPLAY_REDUCTION    } from '../modules/local/plotting.nf'
+include { GZIP                 } from '../modules/local/gzip.nf'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -75,6 +76,12 @@ workflow SCSCAPE {
     ch_versions = Channel.empty()
 
     ch_samples = Channel.fromList(samplesheetToList(params.sample_sheet, "./assets/schema_input.json"))
+
+    GZIP(ch_samples.map { [ it[0], it[1]] })
+                    .join( ch_samples, by: [0,0])
+                    .map { meta, gz, orig, features -> [ meta, gz, features ] }
+                    .set {ch_samples_compressed}
+
     ch_contrasts_file = Channel.from(file(params.segmentation_sheet))
     ch_contrasts_file.splitCsv ( header:true, sep:(params.segmentation_sheet.endsWith('tsv') ? '\t' : ','))
                     .flatMap().filter { !(it.toString().toUpperCase().contains("FALSE")) }
@@ -92,7 +99,7 @@ workflow SCSCAPE {
                     .map { it.reverse() }
                     .set { ch_contrasts }
 
-    ch_contrasts.join(ch_samples).flatMap()
+    ch_contrasts.join(ch_samples_compressed).flatMap()
                 .map { it ->
                 if ( it instanceof LinkedHashMap ){
                     group_ls = new ArrayList()
@@ -117,7 +124,7 @@ workflow SCSCAPE {
                 .map { it.reverse() }
                 .set { ch_updated_meta }
 
-    //ch_updated_meta.view()
+    ch_updated_meta.view()
     ch_init_rds = MAKE_SEURAT (
         ch_updated_meta.map { [it[0], it[1]] },
         ch_updated_meta.map { [it[0], it[2]] },
@@ -246,7 +253,8 @@ workflow SCSCAPE {
         ch_nn_clusters_w_log.map { it[1] },
         params.resolutions,
         params.makeLoupe,
-        params.integration_method
+        params.integration_method,
+        params.eula_agreement
     )
     //CUSTOM_DUMPSOFTWAREVERSIONS (
     //    ch_versions.unique().collectFile(name: 'collated_versions.yml')

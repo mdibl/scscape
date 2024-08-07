@@ -15,6 +15,7 @@ process DISPLAY_REDUCTION {
     val resolutions
     val makeLoupe
     val integration_tool
+    val eula_agreement
 
 
 
@@ -45,6 +46,7 @@ process DISPLAY_REDUCTION {
         $integration_method \
         $meta \
         $makeLoupe \
+        $eula_agreement \
         ${args}
 
     """
