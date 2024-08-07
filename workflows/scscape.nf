@@ -253,8 +253,7 @@ workflow SCSCAPE {
         ch_nn_clusters_w_log.map { it[1] },
         params.resolutions,
         params.makeLoupe,
-        params.integration_method,
-        params.eula_agreement
+        params.integration_method
     )
     //CUSTOM_DUMPSOFTWAREVERSIONS (
     //    ch_versions.unique().collectFile(name: 'collated_versions.yml')

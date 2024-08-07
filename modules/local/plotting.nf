@@ -15,7 +15,6 @@ process DISPLAY_REDUCTION {
     val resolutions
     val makeLoupe
     val integration_tool
-    val eula_agreement
 
 
 
@@ -35,7 +34,8 @@ process DISPLAY_REDUCTION {
     } else {
         integration_method = "NULL"
     }
-    def args = task.ext.args1  ?: 'NULL'
+    def args = task.ext.args  ?: ''
+    def eula_agreement = task.ext.args2 ?: 'NULL'
     """
     pcMax=\$(grep -i -E "^PCs used" $validation_log | perl -pe "s/^PCs.*- //g")
 
