@@ -70,10 +70,12 @@ include { CUSTOM_DUMPSOFTWAREVERSIONS } from '../modules/nf-core/custom/dumpsoft
 
 // Info required for completion email and summary
 def multiqc_report = []
+def validation = []
 
 workflow SCSCAPE {
 
     ch_versions = Channel.empty()
+    ch_validation_log = Channel.empty()
 
     ch_samples = Channel.fromList(samplesheetToList(params.sample_sheet, "./assets/schema_input.json"))
 
@@ -81,6 +83,7 @@ workflow SCSCAPE {
                     .join( ch_samples, by: [0,0])
                     .map { meta, gz, orig, features -> [ meta, gz, features ] }
                     .set {ch_samples_compressed}
+
 
     ch_contrasts_file = Channel.from(file(params.segmentation_sheet))
     ch_contrasts_file.splitCsv ( header:true, sep:(params.segmentation_sheet.endsWith('tsv') ? '\t' : ','))
@@ -132,11 +135,12 @@ workflow SCSCAPE {
         params.min_features,
         params.gene_identifier
     )
-    ch_init_rds.rds.join(ch_updated_meta).set { ch_init_rds }
+    ch_init_rds.rds.join(ch_updated_meta).set { ch_init_rds_meta }
+    ch_validation_log.mix(ch_init_rds.log).set{ ch_validation_log }
 
     ch_normalized_qc = NORMALIZE_QC (
-        ch_init_rds.map { [it[0], it[1]] },
-        ch_init_rds.map { [it[0], it[3]] },
+        ch_init_rds_meta.map { [it[0], it[1]] },
+        ch_init_rds_meta.map { [it[0], it[3]] },
         params.nfeature_lower,
         params.nfeature_upper,
         params.ncount_lower,
@@ -144,13 +148,15 @@ workflow SCSCAPE {
         params.max_mito_pct,
         params.vars_2_regress
     )
-    ch_normalized_qc.rds.join(ch_updated_meta).set { ch_normalized_qc }
+    ch_normalized_qc.rds.join(ch_updated_meta).set { ch_normalized_qc_meta }
+    ch_validation_log.mix(ch_normalized_qc.log).set{ ch_validation_log }
 
     ch_doublet_filtered_rds = FIND_DOUBLETS (
-        ch_normalized_qc.map { [it[0], it[1]] },
-        ch_normalized_qc.map { [it[0], it[2]] },
+        ch_normalized_qc_meta.map { [it[0], it[1]] },
+        ch_normalized_qc_meta.map { [it[0], it[2]] },
         params.vars_2_regress
     )
+    ch_validation_log.mix(ch_doublet_filtered_rds.log).set{ ch_validation_log }
 
     ch_doublet_filtered_rds.rds.map { meta, rds -> [ rds, meta.groups ]}
                     .transpose()
@@ -169,18 +175,23 @@ workflow SCSCAPE {
         ch_merged_groups.multiple,
         params.vars_2_regress
     )
+    ch_validation_log.mix(ch_merged_so.log).set{ ch_validation_log }
 
     ch_scaled_so = SCALE_SO (
         ch_merged_groups.single,
         params.vars_2_regress
     )
+    ch_validation_log.mix(ch_scaled_so.log).set{ ch_validation_log }
 
     ch_pca_multiple = PCA_MULT (
         ch_merged_so.rds
     )
+    ch_validation_log.mix(ch_pca_multiple.log).set{ ch_validation_log }
+
     ch_pca_single = PCA_SING (
         ch_scaled_so.rds
     )
+    ch_validation_log.mix(ch_pca_single.log).set{ ch_validation_log }
 
     ch_pca_single.rds.join(ch_pca_single.log).set { ch_pca_single_updated }
     ch_pca_multiple.rds.join(ch_pca_multiple.log).set { ch_pca_multiple_updated }
@@ -213,6 +224,8 @@ workflow SCSCAPE {
                                         return [ meta, rds, logs ]
                                     }
                                 }.set { ch_dimensions_def }
+
+        ch_validation_log.mix(ch_integrated.log).set{ ch_validation_log }
     } else {
         ch_pca_multiple.rds.map { meta, rds, logs ->
                                     if (true) {
@@ -238,6 +251,7 @@ workflow SCSCAPE {
         params.resolutions,
         params.integration_method
     )
+    ch_validation_log.mix(ch_nn_clusters.log).set{ ch_validation_log }
 
 
     ch_nn_clusters.rds.map { meta, rds -> [ meta.group, meta.integrated, rds ] }
@@ -255,6 +269,9 @@ workflow SCSCAPE {
         params.makeLoupe,
         params.integration_method
     )
+    ch_validation_log.mix(DISPLAY_REDUCTION.out.log).set{ ch_validation_log }
+
+
     //CUSTOM_DUMPSOFTWAREVERSIONS (
     //    ch_versions.unique().collectFile(name: 'collated_versions.yml')
     //)
@@ -280,6 +297,13 @@ workflow SCSCAPE {
         //ch_multiqc_logo.toList()
     //)
     //multiqc_report = MULTIQC.out.report.toList()
+
+
+    // ch_validation_logs.map { it -> it.text }
+    //    .collectFile(name: "agg_validation.log", newline: true)
+    //    .set { ch_validation_log }
+
+    validation = ch_validation_log.collectFile( name: "val.log" ).map{ it -> it.text }.toList()
 }
 
 /*
@@ -293,7 +317,7 @@ workflow.onComplete {
         NfcoreTemplate.email(workflow, params, summary_params, projectDir, log, multiqc_report)
     }
     NfcoreTemplate.dump_parameters(workflow, params)
-    NfcoreTemplate.summary(workflow, params, log)
+    NfcoreTemplate.summary(workflow, params, log, validation)
     if (params.hook_url) {
         NfcoreTemplate.IM_notification(workflow, params, summary_params, projectDir, log)
     }

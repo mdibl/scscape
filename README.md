@@ -13,20 +13,25 @@
 
 ## Introduction
 
-**nf-core/scscape** is a bioinformatics pipeline that ...
-
-<!-- TODO nf-core:
-   Complete this sentence with a 2-3 sentence summary of what types of data the pipeline ingests, a brief overview of the
-   major pipeline sections and the types of output it produces. You're giving an overview to someone new
-   to nf-core here, in 15-20 seconds. For an example, see https://github.com/nf-core/rnaseq/blob/master/README.md#introduction
--->
+**nf-core/scscape** is a bioinformatics pipeline that was built for multi-sample single cell analysis downstream from the generation of count matrices.
+The pipeline operates using many functional components derived from the [Seurat](https://satijalab.org/seurat/) R package. Input data is expected to be in the
+format of barcodes, features, and matrix files. Output includes Seurat objects that contain QC metrics, identified cell clusters, and dimensionally reduced projections that
+encompass the experiments gene expression variability.
 
 <!-- TODO nf-core: Include a figure that guides the user through the major workflow steps. Many nf-core
      workflows use the "tube map" design for that. See https://nf-co.re/docs/contributing/design_guidelines#examples for examples.   -->
 <!-- TODO nf-core: Fill in short bullet-pointed list of the default steps in the pipeline -->
 
-1. Read QC ([`FastQC`](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/))
-2. Present QC for raw reads ([`MultiQC`](http://multiqc.info/))
+1. Gzip all raw input files for consistency
+2. Initialize seurat object for each sample
+3. Normalize gene expression counts & perform mitochondrial / cell-cycle scoring
+4. Detect and remove suspected doublets from each sample
+5. Merge - normalize - find variable features - scale data (SCTransform)
+6. Run principal component analysis
+7. Perform integration to remove technical confounding variables
+8. Find k nearest-neighbors & cluster (Louvain)
+9. Dimensionally reduce expression variance and plot
+
 
 ## Usage
 
@@ -36,21 +41,41 @@ to set-up Nextflow. Make sure to [test your setup](https://nf-co.re/docs/usage/i
 with `-profile test` before running the workflow on actual data.
 :::
 
-<!-- TODO nf-core: Describe the minimum required steps to execute the pipeline, e.g. how to prepare samplesheets.
-     Explain what rows and columns represent. For instance (please edit as appropriate):
+## Configuration
 
-First, prepare a samplesheet with your input data that looks as follows:
+First, prepare a sample sheet with your input data that looks as follows:
 
-`samplesheet.csv`:
+`Samples.csv`:
 
 ```csv
-sample,fastq_1,fastq_2
-CONTROL_REP1,AEG588A1_S1_L002_R1_001.fastq.gz,AEG588A1_S1_L002_R2_001.fastq.gz
+id,data_directory,mt_cc_rm_genes
+00_dpa_1,/filtered_feature_bc_matrix/,AuxillaryGeneList.csv
+```
+Each row represents a samples matrix files (barcodes.tsv, features.tsv, matrix.mtx) and associated genes used in the analysis.
+
+Second, add mitochondrial, S phase, G2 / M phase, removal genes
+
+`AuxillaryGeneList.csv`:
+
+```csv
+MTgenes,G2Mgenes,Sgenes,RMgenes
+mt-nd1,hmgb2a,mcm5,
+mt-nd2,cdk1,pcna,
 ```
 
-Each row represents a fastq file (single-end) or a pair of fastq files (paired end).
+Finally, construct a segmentation file defining the analysis groups for the experiment (ex: treatment, rep, age, sex).
 
--->
+`segmentation.csv`:
+
+```csv
+id,00_dpa,04_dpa,all
+00_dpa_1,true,false,true
+00_dpa_2,true,false,true
+04_dpa_1,false,true,true
+04_dpa_2,false,true,true
+```
+
+*** Make sure id columns match between `segmentation.csv` & `Samples.csv` ***
 
 Now, you can run the pipeline using:
 
@@ -58,9 +83,9 @@ Now, you can run the pipeline using:
 
 ```bash
 nextflow run nf-core/scscape \
-   -profile <docker/singularity/.../institute> \
-   --input samplesheet.csv \
-   --outdir <OUTDIR>
+   -profile docker
+   -params-file paramaters.json
+   -c custom.config
 ```
 
 :::warning

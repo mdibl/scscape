@@ -241,13 +241,43 @@ class NfcoreTemplate {
     //
     // Print pipeline summary on completion
     //
-    public static void summary(workflow, params, log) {
+    public static void summary(workflow, params, log, validation=[]) {
         Map colors = logColours(params.monochrome_logs)
+
         if (workflow.success) {
+
+            def val_logs = validation.getVal()
+            def combined_logs = new ArrayList()
+            for (int i = 0; i < val_logs.size(); i++){
+                combined_logs = combined_logs + val_logs[i].split('\n')
+            }
+
+            def all_combined_logs = new ArrayList()
+            for (list in combined_logs){
+                for (item in list){
+                    all_combined_logs = all_combined_logs + item
+                }
+            }
+
+            def warnings = new String("\t\t")
+            def notes = new String("\t\t")
+
+            for (int i = 0; i < all_combined_logs.size(); i++){
+
+                if (all_combined_logs[i].contains("WARNING")){
+                    warnings = warnings + all_combined_logs[i].substring(8) + "\n\t\t"
+                } else if (all_combined_logs[i].contains("NOTE")){
+                    notes = notes + all_combined_logs[i].substring(5) + "\n\t\t"
+                }
+
+            }
+
             if (workflow.stats.ignoredCount == 0) {
-                log.info "-${colors.purple}[$workflow.manifest.name]${colors.green} Pipeline completed successfully${colors.reset}-"
+                log.info "-${colors.purple}[$workflow.manifest.name]${colors.green} Pipeline completed successfully ${colors.reset}-"
+                log.info "${colors.yellow} \n\tWARNINGS:\n\n "
+                log.info "${colors.blue} \tNOTES:\n\n $notes"
             } else {
-                log.info "-${colors.purple}[$workflow.manifest.name]${colors.yellow} Pipeline completed successfully, but with errored process(es) ${colors.reset}-"
+                log.info "-${colors.purple}[$workflow.manifest.name]${colors.yellow} Pipeline completed successfully, but with errored process(es)${colors.reset}-"
             }
         } else {
             log.info "-${colors.purple}[$workflow.manifest.name]${colors.red} Pipeline completed with errors${colors.reset}-"
