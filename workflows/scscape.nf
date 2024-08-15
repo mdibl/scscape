@@ -89,7 +89,7 @@ workflow SCSCAPE {
     ch_contrasts_file.splitCsv ( header:true, sep:(params.segmentation_sheet.endsWith('tsv') ? '\t' : ','))
                     .flatMap().filter { !(it.toString().toUpperCase().contains("FALSE")) }
                     .map { it ->
-                        if (it.toString().contains("id")){
+                        if (it.toString().substring(0,2) == "id"){
                             lhm = new LinkedHashMap()
                             lhm['id'] = it.toString().split("=")[1]
                             return lhm
