@@ -34,7 +34,7 @@ encompass the experiments gene expression variability.
 
 ## Documentation
 
-The nf-core/scscape pipeline comes with documentation about the pipeline
+The nf-core/scscape pipeline comes with documentation about the pipeline usage, parameters, and output.
 
 ![scscape workflow](docs/images/SubwayMap.png)
 
