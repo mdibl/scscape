@@ -32,13 +32,17 @@ encompass the experiments gene expression variability.
 8. Find k nearest-neighbors & cluster (Louvain)
 9. Dimensionally reduce expression variance and plot
 
+## Documentation
+
+The nf-core/scscape pipeline comes with documentation about the pipeline
+
+![scscape workflow](docs/images/SubwayMap.png)
 
 ## Usage
 
-**Note:**
-If you are new to Nextflow and nf-core, please refer to [this page](https://nf-co.re/docs/usage/installation) on how
-to set-up Nextflow. Make sure to [test your setup](https://nf-co.re/docs/usage/introduction#how-to-run-a-pipeline)
-with `-profile test` before running the workflow on actual data.
+
+>**Note:**
+>If you are new to Nextflow and nf-core, please refer to [this page](https://nf-co.re/docs/usage/installation) on how to set-up Nextflow. Make sure to [test your setup](https://nf-co.re/docs/usage/introduction#how-to-run-a-pipeline) with `-profile test` before running the workflow on actual data.
 
 
 ## Configuration
@@ -75,7 +79,7 @@ id,00_dpa,04_dpa,all
 04_dpa_2,false,true,true
 ```
 
-***Make sure id columns match between `segmentation.csv` & `Samples.csv`***
+>***Make sure id columns match between `segmentation.csv` & `Samples.csv`***
 
 Now, you can run the pipeline using:
 
@@ -83,19 +87,16 @@ Now, you can run the pipeline using:
 
 ```bash
 nextflow run nf-core/scscape \
-   -profile docker
-   -params-file paramaters.json
+   -profile docker \
+   -params-file paramaters.json \
    -c custom.config
 ```
 
-**Warning:**
-Please provide pipeline parameters via the CLI or Nextflow `-params-file` option. Custom config files including those
-provided by the `-c` Nextflow option can be used to provide any configuration _**except for parameters**_;
-see [docs](https://nf-co.re/usage/configuration#custom-configuration-files).
-:::
+>**Warning:**
+>Please provide pipeline parameters via the CLI or Nextflow `-params-file` option. Custom config files including those provided by the `-c` Nextflow option can be used to provide any configuration _**except for parameters**_; see [docs](https://nf-co.re/usage/configuration#custom-configuration-files).
 
-**Note:**
-There is the ability to create a `.loupe` file within the configuration options of this pipeline. This file can be used with the [10X Loupe Browser](https://www.10xgenomics.com/support/software/loupe-browser/latest) to interactively explore you single cell experiment. In order to successfully generate the file, you are required by 10X to both read the [10X End User License Agreement](https://www.10xgenomics.com/legal/end-user-software-license-agreement) and accept their terms by setting the `eula_agreement` parameter to `Agree` (in addition to setting `makeLoupe` to `true`).
+>**Note:**
+>There is the ability to create a `.loupe` file within the configuration options of this pipeline. This file can be used with the [10X Loupe Browser](https://www.10xgenomics.com/support/software/loupe-browser/latest) to interactively explore you single cell experiment. In order to successfully generate the file, you are required by 10X to both read the [10X End User License Agreement](https://www.10xgenomics.com/legal/end-user-software-license-agreement) and accept their terms by setting the `eula_agreement` parameter to `Agree` (in addition to setting `makeLoupe` to `true`).
 
 For more details and further functionality, please refer to the [usage documentation](https://nf-co.re/scscape/usage) and the [parameter documentation](https://nf-co.re/scscape/parameters).
 
