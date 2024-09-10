@@ -18,7 +18,8 @@ process MAKE_SEURAT {
     output:
     tuple val(meta), path ("*SO.rds"),        emit: rds
     tuple val(meta), path("*Validation.log"), emit: log
-    path ("versions.yml"),                     emit: versions
+    path ("*FinalVersions.log"),                     emit: r_versions
+    path ('versions.yml'), emit: versions
 
     when:
     task.ext.when == null || task.ext.when
@@ -41,17 +42,23 @@ process MAKE_SEURAT {
 
     perl -i -pe 's/"//g;s/\\[\\d\\d?\\d?\\] //g' fileName.log *_Validation.log
 
+    grep -i -E "R version " 00_${meta.id}_InitialVersions.log | perl -pe 's/ version /: "/g;s/ \(.*/"/g' >> 00_${meta.id}_FinalVersions.log
+    perl -ne 'print if /other attached packages:/ .. /^$/' 00_${meta.id}_InitialVersions.log | grep -v "other" | perl -pe 's/\[.*]\s+//g;s/\s+/\n/g' | grep -v "^$" | perl -pe 's/_/: "/g;s/$/"/' >> 00_${meta.id}_FinalVersions.log
+
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        Seurat: \$(echo \$( version) | sed "s/, version //g" )
+        R: \$(echo \$(R --version| head -n 1| grep -Eo "[0-9]+[^ ]*"| head -n 1) )
     END_VERSIONS
     """
 
     stub:
     """
+    touch 00_${meta.id}_InitialVersions.log
+    touch 00_${meta.id}_FinalVersions.log
+
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        Seurat: \$(Rscript -e "packageVersion('Seurat')")
+        R: \$(echo \$(R --version| head -n 1| grep -Eo "[0-9]+[^ ]*"| head -n 1) )
     END_VERSIONS
     """
 

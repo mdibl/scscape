@@ -23,7 +23,8 @@ process DISPLAY_REDUCTION {
     path("*Validation.log"),           emit: log
     path("*.cloupe")
     path("*.pdf")
-    //path ("versions.yml"),            emit: versions
+    path ("*FinalVersions.log"),                     emit: r_versions
+    path('versions.yml'), emit: versions
 
     when:
     task.ext.when == null || task.ext.when
@@ -49,13 +50,23 @@ process DISPLAY_REDUCTION {
         $eula_agreement \
         ${args}
 
+    grep -i -E "R version " 08_${meta}_InitialVersions.log | perl -pe 's/ version /: "/g;s/ \(.*/"/g' >> 08_${meta}_FinalVersions.log
+    perl -ne 'print if /other attached packages:/ .. /^$/' 08_${meta}_InitialVersions.log | grep -v "other" | perl -pe 's/\[.*]\s+//g;s/\s+/\n/g' | grep -v "^$" | perl -pe 's/_/: "/g;s/$/"/' >> 08_${meta}_FinalVersions.log
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        R: \$(echo \$(R --version| head -n 1| grep -Eo "[0-9]+[^ ]*"| head -n 1) )
+    END_VERSIONS
     """
 
     stub:
     """
+    touch 08_${meta}_InitialVersions.log
+    touch 08_${meta}_FinalVersions.log
+
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        Seurat: \$(echo \$(Seurat --version) | sed "s/Seurat, version //g" )
+        R: \$(echo \$(R --version| head -n 1| grep -Eo "[0-9]+[^ ]*"| head -n 1) )
     END_VERSIONS
     """
 

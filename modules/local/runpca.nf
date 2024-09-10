@@ -15,7 +15,8 @@ process RUN_PCA {
     tuple val(meta), path ("*_PCASO.rds"), emit: rds
     tuple val(meta), path("*Validation.log"),           emit: log
     path("*.pdf")
-    //path ("versions.yml"),            emit: versions
+    path ("*FinalVersions.log"),                     emit: r_versions
+    path("versions.yml"), emit: versions
 
     when:
     task.ext.when == null || task.ext.when
@@ -30,13 +31,23 @@ process RUN_PCA {
         ${meta} \\
         ${args}
 
+    grep -i -E "R version " 05_${meta}_InitialVersions.log | perl -pe 's/ version /: "/g;s/ \(.*/"/g' >> 05_${meta}_FinalVersions.log
+    perl -ne 'print if /other attached packages:/ .. /^$/' 05_${meta}_InitialVersions.log | grep -v "other" | perl -pe 's/\[.*]\s+//g;s/\s+/\n/g' | grep -v "^$" | perl -pe 's/_/: "/g;s/$/"/' >> 05_${meta.id}_FinalVersions.log
+
+    cat <<-END_VERSIONS > versions.yml
+    "${task.process}":
+        R: \$(echo \$(R --version| head -n 1| grep -Eo "[0-9]+[^ ]*"| head -n 1) )
+    END_VERSIONS
     """
 
     stub:
     """
+    touch 05_${meta}_InitialVersions.log
+    touch 05_${meta}_FinalVersions.log
+
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        Seurat: \$(echo \$(Seurat --version) | sed "s/Seurat, version //g" )
+        R: \$(echo \$(R --version| head -n 1| grep -Eo "[0-9]+[^ ]*"| head -n 1) )
     END_VERSIONS
     """
 

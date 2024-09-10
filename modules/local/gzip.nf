@@ -13,6 +13,7 @@ process GZIP {
 
     output:
     tuple val(meta), path (sample_files), emit: zip
+    path("versions.yml"), emit: versions
 
     when:
     task.ext.when == null || task.ext.when
@@ -27,7 +28,7 @@ process GZIP {
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        GZIP: \$(echo \$(gzip --version) )
+        GZIP: \$(echo \$(gzip --version| head -n 1| sed 's/gzip //) )
     END_VERSIONS
     """
 
