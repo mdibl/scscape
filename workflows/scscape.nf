@@ -128,7 +128,7 @@ workflow SCSCAPE {
                 .map { it.reverse() }
                 .set { ch_updated_meta }
 
-    if (params.gene_identifier == "COMBINE"){
+    if (params.gene_identifier.toUpperCase() == "COMBINE"){
         ch_updated_features = FEATURE_NAMING(
             ch_updated_meta.map( it[0], it[1] ),
             ch_updated_meta.map( it[0], it[2] )
