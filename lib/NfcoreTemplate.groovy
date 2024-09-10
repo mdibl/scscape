@@ -264,9 +264,9 @@ class NfcoreTemplate {
 
             for (int i = 0; i < all_combined_logs.size(); i++){
 
-                if (all_combined_logs[i].contains("WARNING")){
+                if (all_combined_logs[i].contains("WARNING") && !(warnings.contains(all_combined_logs[i].substring(8)))){
                     warnings = warnings + all_combined_logs[i].substring(8) + "\n\t\t"
-                } else if (all_combined_logs[i].contains("NOTE")){
+                } else if (all_combined_logs[i].contains("NOTE") && !(notes.contains(all_combined_logs[i].substring(5)))){
                     notes = notes + all_combined_logs[i].substring(5) + "\n\t\t"
                 }
 
@@ -274,7 +274,7 @@ class NfcoreTemplate {
 
             if (workflow.stats.ignoredCount == 0) {
                 log.info "-${colors.purple}[$workflow.manifest.name]${colors.green} Pipeline completed successfully ${colors.reset}-"
-                log.info "${colors.yellow} \n\tWARNINGS:\n\n "
+                log.info "${colors.yellow} \n\tWARNINGS:\n\n $warnings"
                 log.info "${colors.blue} \tNOTES:\n\n $notes"
             } else {
                 log.info "-${colors.purple}[$workflow.manifest.name]${colors.yellow} Pipeline completed successfully, but with errored process(es)${colors.reset}-"
