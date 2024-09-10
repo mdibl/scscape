@@ -48,6 +48,7 @@ include { INTEGRATION          } from '../modules/local/integration.nf'
 include { FIND_NN_CLUSTER      } from '../modules/local/find_NN_clusters.nf'
 include { DISPLAY_REDUCTION    } from '../modules/local/plotting.nf'
 include { GZIP                 } from '../modules/local/gzip.nf'
+include { FEATURE_NAMING       } from '../modules/local/feature_naming.nf'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -127,10 +128,17 @@ workflow SCSCAPE {
                 .map { it.reverse() }
                 .set { ch_updated_meta }
 
-    ch_updated_meta.view()
+    if (params.gene_identifier == "COMBINE"){
+        ch_updated_features = FEATURE_NAMING(
+            ch_updated_meta.map( it[0], it[1] ),
+            ch_updated_meta.map( it[0], it[2] )
+        )
+    }
+
+    ch_updated_features.view()
     ch_init_rds = MAKE_SEURAT (
-        ch_updated_meta.map { [it[0], it[1]] },
-        ch_updated_meta.map { [it[0], it[2]] },
+        ch_updated_features.map { [it[0], it[1]] },
+        ch_updated_features.map { [it[0], it[2]] },
         params.min_cells,
         params.min_features,
         params.gene_identifier
