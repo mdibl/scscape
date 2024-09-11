@@ -136,7 +136,6 @@ workflow SCSCAPE {
         )
     }
 
-    ch_updated_features.view()
     ch_init_rds = MAKE_SEURAT (
         ch_updated_features.map { [it[0], it[1]] },
         ch_updated_features.map { [it[0], it[2]] },
