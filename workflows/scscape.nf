@@ -81,6 +81,7 @@ workflow SCSCAPE {
     ch_samples = Channel.fromList(samplesheetToList(params.sample_sheet, "./assets/schema_input.json"))
 
     GZIP(ch_samples.map { [ it[0], it[1]] })
+                    .zip
                     .join( ch_samples, by: [0,0])
                     .map { meta, gz, orig, features -> [ meta, gz, features ] }
                     .set {ch_samples_compressed}
