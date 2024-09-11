@@ -23,28 +23,28 @@ process FEATURE_NAMING {
     """
     #!/bin/bash
 
-    gzcat ${sample_files}/features.tsv.gz | perl -ane 'if ($F[0] ne $F[1]) { print "$F[0]\t$F[1]::$F[0]\tExpression\n"; } else { print "$F[0]\t$F[1]\tExpression\n"; }' | gzip > features_new.tsv.gz
+    gzcat ${sample_files}/features.tsv.gz | perl -ane 'if (\$F[0] ne \$F[1]) { print "\$F[0]\t\$F[1]::\$F[0]\tExpression\n"; } else { print "\$F[0]\t\$F[1]\tExpression\n"; }' | gzip > features_new.tsv.gz
 
     rm ${sample_files}/features.tsv.gz
     mv features_new.tsv.gz ${sample_files}/features.tsv.gz
 
     echo "MTgenes" > MT.csv
-    cut -f1 -d ","  $gene_list | grep -v "^$" | tail -n +2 | perl -pe "s/^/\\t/;s/$/::/" > origMT.csv
+    cut -f1 -d ","  $gene_list | grep -v "^\$" | tail -n +2 | perl -pe "s/^/\\t/;s/\$/::/" > origMT.csv
     gzcat ${sample_files}/features.tsv.gz | grep -f origMT.csv | cut -f2 >> MT.csv
     rm origMT.csv
 
     echo "G2Mgenes" > G2M.csv
-    cut -f2 -d ","  $gene_list | grep -v "^$" | tail -n +2 | perl -pe "s/^/\\t/;s/$/::/"> origG2M.csv
+    cut -f2 -d ","  $gene_list | grep -v "^\$" | tail -n +2 | perl -pe "s/^/\\t/;s/\$/::/"> origG2M.csv
     gzcat ${sample_files}/features.tsv.gz | grep -f origG2M.csv | cut -f2 >> G2M.csv
     rm origG2M.csv
 
     echo "Sgenes" > S.csv
-    cut -f3 -d ","  $gene_list | grep -v "^$" | tail -n +2 | perl -pe "s/^/\\t/;s/$/::/"> origS.csv
+    cut -f3 -d ","  $gene_list | grep -v "^\$" | tail -n +2 | perl -pe "s/^/\\t/;s/\$/::/"> origS.csv
     gzcat ${sample_files}/features.tsv.gz | grep -f origS.csv | cut -f2 >> S.csv
     rm origS.csv
 
     echo "RMgenes" > RM.csv
-    cut -f4 -d ","  $gene_list | grep -v "^$" | tail -n +2 | perl -pe "s/^/\\t/;s/$/::/"> origRM.csv
+    cut -f4 -d ","  $gene_list | grep -v "^\$" | tail -n +2 | perl -pe "s/^/\\t/;s/\$/::/"> origRM.csv
     gzcat ${sample_files}/features.tsv.gz | grep -f origRM.csv | cut -f2 >> RM.csv
     rm UpdatedFiles/origRM.csv
 
