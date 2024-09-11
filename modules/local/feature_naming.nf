@@ -13,7 +13,7 @@ process FEATURE_NAMING {
     tuple val(meta), path(gene_list)
 
     output:
-    tuple val(meta), path (sample_files), path ("AuxGeneList.csv")
+    tuple val(meta), path (sample_files), path ("AuxGeneList.csv"), emit: data
     path("versions.yml"), emit: versions
 
     when:

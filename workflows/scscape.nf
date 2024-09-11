@@ -137,8 +137,8 @@ workflow SCSCAPE {
     }
 
     ch_init_rds = MAKE_SEURAT (
-        ch_updated_features.map { [it[0], it[1]] },
-        ch_updated_features.map { [it[0], it[2]] },
+        ch_updated_features.data.map { [it[0], it[1]] },
+        ch_updated_features.data.map { [it[0], it[2]] },
         params.min_cells,
         params.min_features,
         params.gene_identifier
