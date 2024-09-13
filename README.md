@@ -96,7 +96,7 @@ nextflow run nf-core/scscape \
 >Please provide pipeline parameters via the CLI or Nextflow `-params-file` option. Custom config files including those provided by the `-c` Nextflow option can be used to provide any configuration _**except for parameters**_; see [docs](https://nf-co.re/usage/configuration#custom-configuration-files).
 
 >**Note:**
->There is the ability to create a `.loupe` file within the configuration options of this pipeline. This file can be used with the [10X Loupe Browser](https://www.10xgenomics.com/support/software/loupe-browser/latest) to interactively explore you single cell experiment. In order to successfully generate the file, you are required by 10X to both read the [10X End User License Agreement](https://www.10xgenomics.com/legal/end-user-software-license-agreement) and accept their terms by setting the `eula_agreement` parameter to `Agree` (in addition to setting `makeLoupe` to `true`).
+>There is the ability to create a `.loupe` file within the configuration options of this pipeline. This file can be used with the [10x Loupe Browser](https://www.10xgenomics.com/support/software/loupe-browser/latest) to interactively explore your single cell experiment. In order to successfully generate the file, you are required by 10x to both read the [10x End User License Agreement](https://www.10xgenomics.com/legal/end-user-software-license-agreement) and accept their terms by setting the `eula_agreement` parameter to `Agree` (in addition to setting `makeLoupe` to `true`).
 
 For more details and further functionality, please refer to the [usage documentation](https://nf-co.re/scscape/usage) and the [parameter documentation](https://nf-co.re/scscape/parameters).
 
