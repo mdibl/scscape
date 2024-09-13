@@ -17,6 +17,7 @@ process INTEGRATION {
     tuple val(meta), path("*Validation.log"),           emit: log
     path ("*FinalVersions.log"),                     emit: r_versions
     path("versions.yml"), emit: versions
+    path("*Execution.log"), emit: exec
 
     when:
     task.ext.when == null || task.ext.when
@@ -30,7 +31,7 @@ process INTEGRATION {
         $integration_method \\
         ${meta} \\
         $scale_method \\
-        ${args}
+        ${args} 2>&1 | tee > 04_${meta.id}_Execution.log
 
     grep -i -E "R version " 06_${meta}_InitialVersions.log | perl -pe 's/ version /: "/g;s/ \(.*/"/g' >> 06_${meta}_FinalVersions.log
     perl -ne 'print if /other attached packages:/ .. /^\$/' 06_${meta}_InitialVersions.log | grep -v "other" | perl -pe 's/\\[.*]\s+//g;s/\s+/\n/g' | grep -v "^\$" | perl -pe 's/_/: "/g;s/\$/"/' >> 06_${meta}_FinalVersions.log

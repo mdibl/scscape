@@ -22,6 +22,7 @@ process FIND_DOUBLETS {
     path("*.pdf")
     path ("*FinalVersions.log"),                     emit: r_versions
     path("versions.yml"), emit: versions
+    path("*Execution.log"), emit: exec
 
     when:
     task.ext.when == null || task.ext.when
@@ -38,7 +39,7 @@ process FIND_DOUBLETS {
         ${meta.id} \\
         $n_features \\
         $scale_method \\
-        ${args}
+        ${args} 2>&1 | tee > 02_${meta.id}_Execution.log
 
     grep -i -E "R version " 02_${meta.id}_InitialVersions.log | perl -pe 's/ version /: "/g;s/ \(.*/"/g' >> 02_${meta.id}_FinalVersions.log
     perl -ne 'print if /other attached packages:/ .. /^\$/' 02_${meta.id}_InitialVersions.log | grep -v "other" | perl -pe 's/\\[.*]\s+//g;s/\s+/\n/g' | grep -v "^\$" | perl -pe 's/_/: "/g;s/\$/"/' >> 02_${meta.id}_FinalVersions.log

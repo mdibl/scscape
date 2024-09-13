@@ -28,7 +28,7 @@ process GZIP {
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
-        GZIP: \$(echo \$(gzip --version| head -n 1| sed 's/gzip //) )
+        GZIP: \$(echo \$(gzip --version| head -n 1| sed 's/gzip //') )
     END_VERSIONS
     """
 

@@ -25,6 +25,8 @@ process NORMALIZE_QC {
     path("*.pdf")
     path ("*FinalVersions.log"),                     emit: r_versions
     path("versions.yml"), emit: versions
+    path("*Execution.log"), emit: exec
+
     when:
     task.ext.when == null || task.ext.when
 
@@ -53,7 +55,7 @@ process NORMALIZE_QC {
         $rds \\
         ${meta.id} \\
         $run_cc_score \\
-        ${args}
+        ${args} 2>&1 | tee > 01_${meta.id}_Execution.log
 
     grep -i -E "R version " 01_${meta.id}_InitialVersions.log | perl -pe 's/ version /: "/g;s/ \(.*/"/g' >> 01_${meta.id}_FinalVersions.log
     perl -ne 'print if /other attached packages:/ .. /^\$/' 01_${meta.id}_InitialVersions.log | grep -v "other" | perl -pe 's/\\[.*]\s+//g;s/\s+/\n/g' | grep -v "^\$" | perl -pe 's/_/: "/g;s/\$/"/' >> 01_${meta.id}_FinalVersions.log

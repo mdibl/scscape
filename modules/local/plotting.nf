@@ -25,6 +25,7 @@ process DISPLAY_REDUCTION {
     path("*.pdf")
     path ("*FinalVersions.log"),                     emit: r_versions
     path('versions.yml'), emit: versions
+    path("*Execution.log"), emit: exec
 
     when:
     task.ext.when == null || task.ext.when
@@ -48,7 +49,7 @@ process DISPLAY_REDUCTION {
         $meta \
         $makeLoupe \
         $eula_agreement \
-        ${args}
+        ${args} 2>&1 | tee > 04_${meta.id}_Execution.log
 
     grep -i -E "R version " 08_${meta}_InitialVersions.log | perl -pe 's/ version /: "/g;s/ \(.*/"/g' >> 08_${meta}_FinalVersions.log
     perl -ne 'print if /other attached packages:/ .. /^\$/' 08_${meta}_InitialVersions.log | grep -v "other" | perl -pe 's/\\[.*]\s+//g;s/\s+/\n/g' | grep -v "^\$" | perl -pe 's/_/: "/g;s/\$/"/' >> 08_${meta}_FinalVersions.log

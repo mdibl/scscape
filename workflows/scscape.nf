@@ -80,13 +80,13 @@ workflow SCSCAPE {
 
     ch_samples = Channel.fromList(samplesheetToList(params.sample_sheet, "./assets/schema_input.json"))
 
-    GZIP(ch_samples.map { [ it[0], it[1]] })
-                    .zip
-                    .join( ch_samples, by: [0,0])
-                    .map { meta, gz, orig, features -> [ meta, gz, features ] }
-                    .set {ch_samples_compressed}
+    ch_gzip = GZIP(ch_samples.map { [ it[0], it[1]] })
+    ch_gzip.zip
+            .join( ch_samples, by: [0,0])
+            .map { meta, gz, orig, features -> [ meta, gz, features ] }
+            .set {ch_samples_compressed}
 
-
+    
     ch_contrasts_file = Channel.from(file(params.segmentation_sheet))
     ch_contrasts_file.splitCsv ( header:true, sep:(params.segmentation_sheet.endsWith('tsv') ? '\t' : ','))
                     .flatMap().filter { !(it.toString().toUpperCase().contains("FALSE")) }
@@ -129,16 +129,18 @@ workflow SCSCAPE {
                 .map { it.reverse() }
                 .set { ch_updated_meta }
 
+
     if (params.gene_identifier.toUpperCase() == "COMBINE"){
         ch_updated_features = FEATURE_NAMING(
-            ch_updated_meta.map{ it[0], it[1] },
-            ch_updated_meta.map{ it[0], it[2] }
+            ch_updated_meta.map { [ it[0], it[1] ] },
+            ch_updated_meta.map { [ it[0], it[2] ] }
         )
     }
-
+    
+ 
     ch_init_rds = MAKE_SEURAT (
-        ch_updated_features.data.map { [it[0], it[1]] },
-        ch_updated_features.data.map { [it[0], it[2]] },
+        ch_updated_features.data.map{ [ it[0], it[1] ] },
+        ch_updated_features.data.map{ [ it[0], it[2] ] },
         params.min_cells,
         params.min_features,
         params.gene_identifier
@@ -312,13 +314,16 @@ workflow SCSCAPE {
     //    .set { ch_validation_log }
 
     validation = ch_validation_log.collectFile( name: "val.log" ).map{ it -> it.text }.toList()
+
 }
+
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     COMPLETION EMAIL AND SUMMARY
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 */
+
 
 workflow.onComplete {
     if (params.email || params.email_on_fail) {
@@ -330,6 +335,7 @@ workflow.onComplete {
         NfcoreTemplate.IM_notification(workflow, params, summary_params, projectDir, log)
     }
 }
+
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

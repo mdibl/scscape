@@ -20,6 +20,7 @@ process MAKE_SEURAT {
     tuple val(meta), path("*Validation.log"), emit: log
     path ("*FinalVersions.log"),                     emit: r_versions
     path ('versions.yml'), emit: versions
+    path("*Execution.log"), emit: exec
 
     when:
     task.ext.when == null || task.ext.when
@@ -38,7 +39,7 @@ process MAKE_SEURAT {
         "${meta.groups}" \\
         $min_cells \\
         $min_features \\
-        ${args}
+        ${args} 2>&1 | tee > 00_${meta.id}_Execution.log
 
     perl -i -pe 's/"//g;s/\\[\\d\\d?\\d?\\] //g' fileName.log *_Validation.log
 
