@@ -1,5 +1,5 @@
 id,data_directory,mt_cc_rm_genes
-0dpa,./assets/test_data/0dpa/,./auxillaryGeneFiles/danioRerio.aux.features.csv
-1dpa,./assets/test_data/1dpa/,./auxillaryGeneFiles/danioRerio.aux.features.csv
-2dpa,./assets/test_data/2dpa/,./auxillaryGeneFiles/danioRerio.aux.features.csv
-4dpa,./assets/test_data/4dpa/,./auxillaryGeneFiles/danioRerio.aux.features.csv
+0dpa,${projectDir}/assets/test_data/0dpa/,${projectDir}/auxillaryGeneFiles/danioRerio.aux.features.csv
+1dpa,${projectDir}/assets/test_data/1dpa/,${projectDir}/auxillaryGeneFiles/danioRerio.aux.features.csv
+2dpa,${projectDir}/assets/test_data/2dpa/,${projectDir}/auxillaryGeneFiles/danioRerio.aux.features.csv
+4dpa,${projectDir}/assets/test_data/4dpa/,${projectDir}/auxillaryGeneFiles/danioRerio.aux.features.csv
