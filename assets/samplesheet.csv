@@ -1,3 +1,5 @@
-sample,fastq_1,fastq_2
-SAMPLE_PAIRED_END,/path/to/fastq/files/AEG588A1_S1_L002_R1_001.fastq.gz,/path/to/fastq/files/AEG588A1_S1_L002_R2_001.fastq.gz
-SAMPLE_SINGLE_END,/path/to/fastq/files/AEG588A4_S4_L003_R1_001.fastq.gz,
+id,data_directory,mt_cc_rm_genes
+0dpa,./assets/test_data/0dpa/,./auxillaryGeneFiles/danioRerio.aux.features.csv
+1dpa,./assets/test_data/1dpa/,./auxillaryGeneFiles/danioRerio.aux.features.csv
+2dpa,./assets/test_data/2dpa/,./auxillaryGeneFiles/danioRerio.aux.features.csv
+4dpa,./assets/test_data/4dpa/,./auxillaryGeneFiles/danioRerio.aux.features.csv
