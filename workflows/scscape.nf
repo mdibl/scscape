@@ -37,18 +37,18 @@ ch_multiqc_custom_methods_description = params.multiqc_methods_description ? fil
 // SUBWORKFLOW: Consisting of a mix of local and nf-core/modules
 //
 include { INPUT_CHECK          } from '../subworkflows/local/input_check'
-include { MAKE_SEURAT          } from '../modules/local/makeseurat.nf'
-include { NORMALIZE_QC         } from '../modules/local/normalize_qc.nf'
-include { FIND_DOUBLETS        } from '../modules/local/doubletfinder.nf'
-include { MERGE_SO             } from '../modules/local/merge.nf'
-include { MERGE_SO as SCALE_SO } from '../modules/local/merge.nf'
-include { RUN_PCA as PCA_MULT  } from '../modules/local/runpca.nf'
-include { RUN_PCA as PCA_SING  } from '../modules/local/runpca.nf'
-include { INTEGRATION          } from '../modules/local/integration.nf'
-include { FIND_NN_CLUSTER      } from '../modules/local/find_NN_clusters.nf'
-include { DISPLAY_REDUCTION    } from '../modules/local/plotting.nf'
-include { GZIP                 } from '../modules/local/gzip.nf'
-include { FEATURE_NAMING       } from '../modules/local/feature_naming.nf'
+include { MAKE_SEURAT          } from '../modules/local/makeseurat/makeseurat.nf'
+include { NORMALIZE_QC         } from '../modules/local/normalize_qc/normalize_qc.nf'
+include { FIND_DOUBLETS        } from '../modules/local/doubletfinder/doubletfinder.nf'
+include { MERGE_SO             } from '../modules/local/merge/merge.nf'
+include { MERGE_SO as SCALE_SO } from '../modules/local/merge/merge.nf'
+include { RUN_PCA as PCA_MULT  } from '../modules/local/runpca/runpca.nf'
+include { RUN_PCA as PCA_SING  } from '../modules/local/runpca/runpca.nf'
+include { INTEGRATION          } from '../modules/local/integration/integration.nf'
+include { FIND_NN_CLUSTER      } from '../modules/local/find_NN_clusters/find_NN_clusters.nf'
+include { DISPLAY_REDUCTION    } from '../modules/local/plotting/plotting.nf'
+include { GZIP                 } from '../modules/local/gzip/gzip.nf'
+include { FEATURE_NAMING       } from '../modules/local/feature_naming/feature_naming.nf'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -135,18 +135,26 @@ workflow SCSCAPE {
             ch_updated_meta.map { [ it[0], it[1] ] },
             ch_updated_meta.map { [ it[0], it[2] ] }
         )
-    }
-    
- 
-    ch_init_rds = MAKE_SEURAT (
+        ch_init_rds = MAKE_SEURAT (
         ch_updated_features.data.map{ [ it[0], it[1] ] },
         ch_updated_features.data.map{ [ it[0], it[2] ] },
         params.min_cells,
         params.min_features,
         params.gene_identifier
-    )
-    ch_init_rds.rds.join(ch_updated_meta).set { ch_init_rds_meta }
-    ch_validation_log.mix(ch_init_rds.log).set{ ch_validation_log }
+        )
+        ch_init_rds.rds.join(ch_updated_meta).set { ch_init_rds_meta }
+        ch_validation_log.mix(ch_init_rds.log).set{ ch_validation_log }
+    } else {
+        ch_init_rds = MAKE_SEURAT (
+        ch_updated_meta.map{ [ it[0], it[1] ] },
+        ch_updated_meta.map{ [ it[0], it[2] ] },
+        params.min_cells,
+        params.min_features,
+        params.gene_identifier
+        )
+        ch_init_rds.rds.join(ch_updated_meta).set { ch_init_rds_meta }
+        ch_validation_log.mix(ch_init_rds.log).set{ ch_validation_log }
+    }
 
     ch_normalized_qc = NORMALIZE_QC (
         ch_init_rds_meta.map { [it[0], it[1]] },
