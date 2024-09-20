@@ -42,7 +42,7 @@ process FIND_DOUBLETS {
         ${args} 2>&1 | tee > 02_${meta.id}_Execution.log
 
     ##grep -i -E "R version " 02_${meta.id}_InitialVersions.log | perl -pe 's/ version /: "/g;s/ \(.*/"/g' >> 02_${meta.id}_FinalVersions.log
-    ##perl -ne 'print if /other attached packages:/ .. /^\$/' 02_${meta.id}_InitialVersions.log | grep -v "other" | perl -pe 's/\\[.*]\s+//g;s/\s+/\n/g' | grep -v "^\$" | perl -pe 's/_/: "/g;s/\$/"/' >> 02_${meta.id}_FinalVersions.log
+    ##perl -ne 'print if /other attached packages:/ .. /^\$/' 02_${meta.id}_InitialVersions.log | grep -v "other" | perl -pe 's/\\[.*]\s+//g;s/\s+/\\n/g' | grep -v "^\$" | perl -pe 's/_/: "/g;s/\$/"/' >> 02_${meta.id}_FinalVersions.log
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
