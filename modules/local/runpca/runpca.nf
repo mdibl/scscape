@@ -13,7 +13,7 @@ process RUN_PCA {
 
     output:
     tuple val(meta), path ("*_PCASO.rds"), emit: rds
-    //tuple val(meta), path("*Validation.log"),           emit: log
+    tuple val(meta), path("*Validation.log"),           emit: log
     path("*.pdf")
     //path ("*FinalVersions.log"),                     emit: r_versions
     //path("versions.yml"), emit: versions

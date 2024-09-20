@@ -86,7 +86,7 @@ workflow SCSCAPE {
             .map { meta, gz, orig, features -> [ meta, gz, features ] }
             .set {ch_samples_compressed}
 
-    
+
     ch_contrasts_file = Channel.from(file(params.segmentation_sheet))
     ch_contrasts_file.splitCsv ( header:true, sep:(params.segmentation_sheet.endsWith('tsv') ? '\t' : ','))
                     .flatMap().filter { !(it.toString().toUpperCase().contains("FALSE")) }
@@ -143,7 +143,7 @@ workflow SCSCAPE {
         params.gene_identifier
         )
         ch_init_rds.rds.join(ch_updated_meta).set { ch_init_rds_meta }
-        ch_validation_log.mix(ch_init_rds.log).set{ ch_validation_log }
+        //ch_validation_log.mix(ch_init_rds.log).set{ ch_validation_log }
     } else {
         ch_init_rds = MAKE_SEURAT (
         ch_updated_meta.map{ [ it[0], it[1] ] },
@@ -153,7 +153,7 @@ workflow SCSCAPE {
         params.gene_identifier
         )
         ch_init_rds.rds.join(ch_updated_meta).set { ch_init_rds_meta }
-        ch_validation_log.mix(ch_init_rds.log).set{ ch_validation_log }
+        //ch_validation_log.mix(ch_init_rds.log).set{ ch_validation_log }
     }
 
     ch_normalized_qc = NORMALIZE_QC (
@@ -167,14 +167,14 @@ workflow SCSCAPE {
         params.vars_2_regress
     )
     ch_normalized_qc.rds.join(ch_updated_meta).set { ch_normalized_qc_meta }
-    ch_validation_log.mix(ch_normalized_qc.log).set{ ch_validation_log }
+    //ch_validation_log.mix(ch_normalized_qc.log).set{ ch_validation_log }
 
     ch_doublet_filtered_rds = FIND_DOUBLETS (
         ch_normalized_qc_meta.map { [it[0], it[1]] },
         ch_normalized_qc_meta.map { [it[0], it[2]] },
         params.vars_2_regress
     )
-    ch_validation_log.mix(ch_doublet_filtered_rds.log).set{ ch_validation_log }
+    //ch_validation_log.mix(ch_doublet_filtered_rds.log).set{ ch_validation_log }
 
     ch_doublet_filtered_rds.rds.map { meta, rds -> [ rds, meta.groups ]}
                     .transpose()
@@ -193,23 +193,23 @@ workflow SCSCAPE {
         ch_merged_groups.multiple,
         params.vars_2_regress
     )
-    ch_validation_log.mix(ch_merged_so.log).set{ ch_validation_log }
+    //ch_validation_log.mix(ch_merged_so.log).set{ ch_validation_log }
 
     ch_scaled_so = SCALE_SO (
         ch_merged_groups.single,
         params.vars_2_regress
     )
-    ch_validation_log.mix(ch_scaled_so.log).set{ ch_validation_log }
+    //ch_validation_log.mix(ch_scaled_so.log).set{ ch_validation_log }
 
     ch_pca_multiple = PCA_MULT (
         ch_merged_so.rds
     )
-    ch_validation_log.mix(ch_pca_multiple.log).set{ ch_validation_log }
+    //ch_validation_log.mix(ch_pca_multiple.log).set{ ch_validation_log }
 
     ch_pca_single = PCA_SING (
         ch_scaled_so.rds
     )
-    ch_validation_log.mix(ch_pca_single.log).set{ ch_validation_log }
+    //ch_validation_log.mix(ch_pca_single.log).set{ ch_validation_log }
 
     ch_pca_single.rds.join(ch_pca_single.log).set { ch_pca_single_updated }
     ch_pca_multiple.rds.join(ch_pca_multiple.log).set { ch_pca_multiple_updated }
@@ -243,7 +243,7 @@ workflow SCSCAPE {
                                     }
                                 }.set { ch_dimensions_def }
 
-        ch_validation_log.mix(ch_integrated.log).set{ ch_validation_log }
+        //ch_validation_log.mix(ch_integrated.log).set{ ch_validation_log }
     } else {
         ch_pca_multiple.rds.map { meta, rds, logs ->
                                     if (true) {
@@ -269,7 +269,7 @@ workflow SCSCAPE {
         params.resolutions,
         params.integration_method
     )
-    ch_validation_log.mix(ch_nn_clusters.log).set{ ch_validation_log }
+    //ch_validation_log.mix(ch_nn_clusters.log).set{ ch_validation_log }
 
 
     ch_nn_clusters.rds.map { meta, rds -> [ meta.group, meta.integrated, rds ] }
@@ -287,7 +287,7 @@ workflow SCSCAPE {
         params.makeLoupe,
         params.integration_method
     )
-    ch_validation_log.mix(DISPLAY_REDUCTION.out.log).set{ ch_validation_log }
+    //ch_validation_log.mix(DISPLAY_REDUCTION.out.log).set{ ch_validation_log }
 
 
     //CUSTOM_DUMPSOFTWAREVERSIONS (
