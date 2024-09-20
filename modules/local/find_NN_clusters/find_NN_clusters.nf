@@ -16,12 +16,12 @@ process FIND_NN_CLUSTER {
 
     output:
     tuple val(meta), path ("*_ClusterSO.rds"), emit: rds
-    tuple val(meta), path("*Validation.log"),  emit: log
+    //tuple val(meta), path("*Validation.log"),  emit: log
     path("markers")
     path("*.pdf")
-    path ("*FinalVersions.log"),               emit: r_versions
-    path('versions.yml'), emit: versions
-    path("*Execution.log"), emit: exec
+    //path ("*FinalVersions.log"),               emit: r_versions
+    //path('versions.yml'), emit: versions
+    //path("*Execution.log"), emit: exec
 
     when:
     task.ext.when == null || task.ext.when
@@ -47,8 +47,8 @@ process FIND_NN_CLUSTER {
         $scale_method \\
         ${args} 2>&1 | tee > 04_${meta.id}_Execution.log
 
-    grep -i -E "R version " 07_${meta}_InitialVersions.log | perl -pe 's/ version /: "/g;s/ \(.*/"/g' >> 07_${meta}_FinalVersions.log
-    perl -ne 'print if /other attached packages:/ .. /^\$/' 07_${meta}_InitialVersions.log | grep -v "other" | perl -pe 's/\\[.*]\s+//g;s/\s+/\n/g' | grep -v "^\$" | perl -pe 's/_/: "/g;s/\$/"/' >> 07_${meta}_FinalVersions.log
+    ##grep -i -E "R version " 07_${meta}_InitialVersions.log | perl -pe 's/ version /: "/g;s/ \(.*/"/g' >> 07_${meta}_FinalVersions.log
+    ##perl -ne 'print if /other attached packages:/ .. /^\$/' 07_${meta}_InitialVersions.log | grep -v "other" | perl -pe 's/\\[.*]\s+//g;s/\s+/\n/g' | grep -v "^\$" | perl -pe 's/_/: "/g;s/\$/"/' >> 07_${meta}_FinalVersions.log
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
