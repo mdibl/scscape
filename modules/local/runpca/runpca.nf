@@ -13,11 +13,11 @@ process RUN_PCA {
 
     output:
     tuple val(meta), path ("*_PCASO.rds"), emit: rds
-    tuple val(meta), path("*Validation.log"),           emit: log
+    //tuple val(meta), path("*Validation.log"),           emit: log
     path("*.pdf")
-    path ("*FinalVersions.log"),                     emit: r_versions
-    path("versions.yml"), emit: versions
-    path("*Execution.log"), emit: exec
+    //path ("*FinalVersions.log"),                     emit: r_versions
+    //path("versions.yml"), emit: versions
+    //path("*Execution.log"), emit: exec
 
     when:
     task.ext.when == null || task.ext.when
@@ -32,8 +32,8 @@ process RUN_PCA {
         ${meta} \\
         ${args} 2>&1 | tee > 05_${meta.id}_Execution.log
 
-    grep -i -E "R version " 05_${meta}_InitialVersions.log | perl -pe 's/ version /: "/g;s/ \(.*/"/g' >> 05_${meta}_FinalVersions.log
-    perl -ne 'print if /other attached packages:/ .. /^\$/' 05_${meta}_InitialVersions.log | grep -v "other" | perl -pe 's/\\[.*]\s+//g;s/\s+/\n/g' | grep -v "^\$" | perl -pe 's/_/: "/g;s/\$/"/' >> 05_${meta.id}_FinalVersions.log
+    ##grep -i -E "R version " 05_${meta}_InitialVersions.log | perl -pe 's/ version /: "/g;s/ \(.*/"/g' >> 05_${meta}_FinalVersions.log
+    ##perl -ne 'print if /other attached packages:/ .. /^\$/' 05_${meta}_InitialVersions.log | grep -v "other" | perl -pe 's/\\[.*]\s+//g;s/\s+/\n/g' | grep -v "^\$" | perl -pe 's/_/: "/g;s/\$/"/' >> 05_${meta.id}_FinalVersions.log
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

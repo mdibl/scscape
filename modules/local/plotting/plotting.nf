@@ -20,12 +20,12 @@ process DISPLAY_REDUCTION {
 
     output:
     tuple val(meta), path ("*_FinalSO.rds"), emit: rds
-    path("*Validation.log"),           emit: log
+    //path("*Validation.log"),           emit: log
     path("*.cloupe")
     path("*.pdf")
-    path ("*FinalVersions.log"),                     emit: r_versions
-    path('versions.yml'), emit: versions
-    path("*Execution.log"), emit: exec
+    //path ("*FinalVersions.log"),                     emit: r_versions
+    //path('versions.yml'), emit: versions
+    //path("*Execution.log"), emit: exec
 
     when:
     task.ext.when == null || task.ext.when
@@ -51,8 +51,8 @@ process DISPLAY_REDUCTION {
         $eula_agreement \
         ${args} 2>&1 | tee > 04_${meta.id}_Execution.log
 
-    grep -i -E "R version " 08_${meta}_InitialVersions.log | perl -pe 's/ version /: "/g;s/ \(.*/"/g' >> 08_${meta}_FinalVersions.log
-    perl -ne 'print if /other attached packages:/ .. /^\$/' 08_${meta}_InitialVersions.log | grep -v "other" | perl -pe 's/\\[.*]\s+//g;s/\s+/\n/g' | grep -v "^\$" | perl -pe 's/_/: "/g;s/\$/"/' >> 08_${meta}_FinalVersions.log
+    ##grep -i -E "R version " 08_${meta}_InitialVersions.log | perl -pe 's/ version /: "/g;s/ \(.*/"/g' >> 08_${meta}_FinalVersions.log
+    ##perl -ne 'print if /other attached packages:/ .. /^\$/' 08_${meta}_InitialVersions.log | grep -v "other" | perl -pe 's/\\[.*]\s+//g;s/\s+/\n/g' | grep -v "^\$" | perl -pe 's/_/: "/g;s/\$/"/' >> 08_${meta}_FinalVersions.log
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
