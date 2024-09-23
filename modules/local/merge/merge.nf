@@ -33,7 +33,7 @@ process MERGE_SO {
         $vars_2_regress \\
         $n_features \\
         $scale_method \\
-        ${args} 2>&1 | tee > 04_${meta.id}_Execution.log
+        ${args} 2>&1 | tee > 04_${meta}_Execution.log
 
     ##grep -i -E "R version " 04_${meta}_InitialVersions.log | perl -pe 's/ version /: "/g;s/ \(.*/"/g' >> 04_${meta}_FinalVersions.log
     ##perl -ne 'print if /other attached packages:/ .. /^\$/' 04_${meta}_InitialVersions.log | grep -v "other" | perl -pe 's/\\[.*]\s+//g;s/\s+/\\n/g' | grep -v "^\$" | perl -pe 's/_/: "/g;s/\$/"/' >> 04_${meta.id}_FinalVersions.log

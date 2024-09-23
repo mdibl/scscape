@@ -45,7 +45,7 @@ process FIND_NN_CLUSTER {
         ${integration_method} \\
         ${meta.group} \\
         $scale_method \\
-        ${args} 2>&1 | tee > 04_${meta.id}_Execution.log
+        ${args} 2>&1 | tee > 04_${meta}_Execution.log
 
     ##grep -i -E "R version " 07_${meta}_InitialVersions.log | perl -pe 's/ version /: "/g;s/ \(.*/"/g' >> 07_${meta}_FinalVersions.log
     ##perl -ne 'print if /other attached packages:/ .. /^\$/' 07_${meta}_InitialVersions.log | grep -v "other" | perl -pe 's/\\[.*]\s+//g;s/\s+/\\n/g' | grep -v "^\$" | perl -pe 's/_/: "/g;s/\$/"/' >> 07_${meta}_FinalVersions.log
