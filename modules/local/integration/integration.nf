@@ -31,7 +31,7 @@ process INTEGRATION {
         $integration_method \\
         ${meta} \\
         $scale_method \\
-        ${args} 2>&1 | tee > 04_${meta.id}_Execution.log
+        ${args} 2>&1 | tee > 04_${meta}_Execution.log
 
     ##grep -i -E "R version " 06_${meta}_InitialVersions.log | perl -pe 's/ version /: "/g;s/ \(.*/"/g' >> 06_${meta}_FinalVersions.log
     ##perl -ne 'print if /other attached packages:/ .. /^\$/' 06_${meta}_InitialVersions.log | grep -v "other" | perl -pe 's/\\[.*]\s+//g;s/\s+/\\n/g' | grep -v "^\$" | perl -pe 's/_/: "/g;s/\$/"/' >> 06_${meta}_FinalVersions.log
