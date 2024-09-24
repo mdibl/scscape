@@ -21,11 +21,11 @@ process NORMALIZE_QC {
 
     output:
     tuple val(meta), path ("*_NormQCSO.rds"),        emit: rds
-    //tuple val(meta), path("*Validation.log"), emit: log
-    //path("*.pdf")
-    //path ("*FinalVersions.log"),                     emit: r_versions
-    //path("versions.yml"), emit: versions
-    //path("*Execution.log"), emit: exec
+    tuple val(meta), path("*Validation.log"), emit: log
+    path("*.pdf")
+    path ("*FinalVersions.log"),                     emit: r_versions
+    path("versions.yml"), emit: versions
+    path("*Execution.log"), emit: exec
 
     when:
     task.ext.when == null || task.ext.when
@@ -57,8 +57,10 @@ process NORMALIZE_QC {
         $run_cc_score \\
         ${args} 2>&1 | tee > 01_${meta.id}_Execution.log
 
-    ##grep -i -E "R version " 01_${meta.id}_InitialVersions.log | perl -pe 's/ version /: "/g;s/ \(.*/"/g' >> 01_${meta.id}_FinalVersions.log
-    ##perl -ne 'print if /other attached packages:/ .. /^\$/' 01_${meta.id}_InitialVersions.log | grep -v "other" | perl -pe 's/\\[.*]\s+//g;s/\s+/\\n/g' | grep -v "^\$" | perl -pe 's/_/: "/g;s/\$/"/' >> 01_${meta.id}_FinalVersions.log
+    perl -i -pe 's/"//g;s/\\[\\d\\d?\\d?\\] //g' 01_${meta.id}_NormQCValidation.log
+
+    grep -i -E "R version " 01_${meta.id}_NormQCVersions.log | perl -pe 's/ version /: \\"/g;s/ \\(.*/\\"/g' >> 01_${meta.id}_FinalVersions.log
+    perl -ne 'print if /other attached packages:/ .. /^\$/' 01_${meta.id}_NormQCVersions.log | grep -v "other" | perl -pe 's/\\\\[.*]\\s+//g;s/\\s+/\\n/g' | grep -v "^\$" | perl -pe 's/_/: \\"/g;s/\$/\\"/' >> 01_${meta.id}_FinalVersions.log
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
@@ -68,7 +70,7 @@ process NORMALIZE_QC {
 
     stub:
     """
-    touch 01_${meta.id}_InitialVersions.log
+    touch 01_${meta.id}_NormQCVersions.log
     touch 01_${meta.id}_FinalVersions.log
 
     cat <<-END_VERSIONS > versions.yml

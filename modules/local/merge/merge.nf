@@ -14,11 +14,11 @@ process MERGE_SO {
 
     output:
     tuple val(meta), path ("*_MergedSO.rds"), emit: rds
-    //path("*Validation.log"),           emit: log
+    path("*Validation.log"),           emit: log
     path("*.pdf")
-    //path ("*FinalVersions.log"),                     emit: r_versions
-    //path("versions.yml"), emit: versions
-    //path("*Execution.log"), emit: exec
+    path ("*FinalVersions.log"),                     emit: r_versions
+    path("versions.yml"), emit: versions
+    path("*Execution.log"), emit: exec
 
     when:
     task.ext.when == null || task.ext.when
@@ -33,10 +33,12 @@ process MERGE_SO {
         $vars_2_regress \\
         $n_features \\
         $scale_method \\
-        ${args} 2>&1 | tee > 04_${meta}_Execution.log
+        ${args} 2>&1 | tee > 03_${meta}_Execution.log
 
-    ##grep -i -E "R version " 04_${meta}_InitialVersions.log | perl -pe 's/ version /: "/g;s/ \(.*/"/g' >> 04_${meta}_FinalVersions.log
-    ##perl -ne 'print if /other attached packages:/ .. /^\$/' 04_${meta}_InitialVersions.log | grep -v "other" | perl -pe 's/\\[.*]\s+//g;s/\s+/\\n/g' | grep -v "^\$" | perl -pe 's/_/: "/g;s/\$/"/' >> 04_${meta.id}_FinalVersions.log
+    perl -i -pe 's/"//g;s/\\[\\d\\d?\\d?\\] //g' 03_${meta}_MergeValidation.log
+
+    grep -i -E "R version " 03_${meta}_MergeVersions.log | perl -pe 's/ version /: \\"/g;s/ \\(.*/\\"/g' >> 03_${meta}_FinalVersions.log
+    perl -ne 'print if /other attached packages:/ .. /^\$/' 03_${meta}_MergeVersions.log | grep -v "other" | perl -pe 's/\\\\[.*]\\s+//g;s/\\s+/\\n/g' | grep -v "^\$" | perl -pe 's/_/: \\"/g;s/\$/\\"/' >> 03_${meta}_FinalVersions.log
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
@@ -46,7 +48,7 @@ process MERGE_SO {
 
     stub:
     """
-    touch 04_${meta}_InitialVersions.log
+    touch 04_${meta}_MergeVersions.log
     touch 04_${meta}_FinalVersions.log
 
     cat <<-END_VERSIONS > versions.yml

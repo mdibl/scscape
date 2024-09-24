@@ -15,9 +15,9 @@ process RUN_PCA {
     tuple val(meta), path ("*_PCASO.rds"), emit: rds
     tuple val(meta), path("*Validation.log"),           emit: log
     path("*.pdf")
-    //path ("*FinalVersions.log"),                     emit: r_versions
-    //path("versions.yml"), emit: versions
-    //path("*Execution.log"), emit: exec
+    path ("*FinalVersions.log"),                     emit: r_versions
+    path("versions.yml"), emit: versions
+    path("*Execution.log"), emit: exec
 
     when:
     task.ext.when == null || task.ext.when
@@ -30,10 +30,12 @@ process RUN_PCA {
         $rds \\
         ${pcMax} \\
         ${meta} \\
-        ${args} 2>&1 | tee > 05_${meta}_Execution.log
+        ${args} 2>&1 | tee > 04_${meta}_Execution.log
 
-    ##grep -i -E "R version " 05_${meta}_InitialVersions.log | perl -pe 's/ version /: "/g;s/ \(.*/"/g' >> 05_${meta}_FinalVersions.log
-    ##perl -ne 'print if /other attached packages:/ .. /^\$/' 05_${meta}_InitialVersions.log | grep -v "other" | perl -pe 's/\\[.*]\s+//g;s/\s+/\\n/g' | grep -v "^\$" | perl -pe 's/_/: "/g;s/\$/"/' >> 05_${meta.id}_FinalVersions.log
+    perl -i -pe 's/"//g;s/\\[\\d\\d?\\d?\\] //g' 04_${meta}_PCAValidation.log
+
+    grep -i -E "R version " 04_${meta}_PCAVersions.log | perl -pe 's/ version /: \\"/g;s/ \\(.*/\\"/g' >> 04_${meta}_FinalVersions.log
+    perl -ne 'print if /other attached packages:/ .. /^\$/' 04_${meta}_PCAVersions.log | grep -v "other" | perl -pe 's/\\\\[.*]\\s+//g;s/\\s+/\\n/g' | grep -v "^\$" | perl -pe 's/_/: \\"/g;s/\$/\\"/' >> 04_${meta}_FinalVersions.log
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
@@ -43,7 +45,7 @@ process RUN_PCA {
 
     stub:
     """
-    touch 05_${meta}_InitialVersions.log
+    touch 05_${meta}_PCAVersions.log
     touch 05_${meta}_FinalVersions.log
 
     cat <<-END_VERSIONS > versions.yml
