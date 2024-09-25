@@ -47,10 +47,10 @@ process FIND_NN_CLUSTER {
         $scale_method \\
         ${args} 2>&1 | tee > 06_${meta.group}_Execution.log
 
-    perl -i -pe 's/"//g;s/\\[\\d\\d?\\d?\\] //g' 06_${meta}_ClusterValidation.log
+    perl -i -pe 's/"//g;s/\\[\\d\\d?\\d?\\] //g' 06_${meta.group}_ClusterValidation.log
 
-    grep -i -E "R version " 06_${meta}_ClusterVersions.log | perl -pe 's/ version /: \\"/g;s/ \\(.*/\\"/g' >> 06_${meta}_FinalVersions.log
-    perl -ne 'print if /other attached packages:/ .. /^\$/' 06_${meta}_ClusterVersions.log | grep -v "other" | perl -pe 's/\\\\[.*]\\s+//g;s/\\s+/\\n/g' | grep -v "^\$" | perl -pe 's/_/: \\"/g;s/\$/\\"/' >> 06_${meta}_FinalVersions.log
+    grep -i -E "R version " 06_${meta.group}_ClusterVersions.log | perl -pe 's/ version /: \\"/g;s/ \\(.*/\\"/g' >> 06_${meta.group}_FinalVersions.log
+    perl -ne 'print if /other attached packages:/ .. /^\$/' 06_${meta.group}_ClusterVersions.log | grep -v "other" | perl -pe 's/\\\\[.*]\\s+//g;s/\\s+/\\n/g' | grep -v "^\$" | perl -pe 's/_/: \\"/g;s/\$/\\"/' >> 06_${meta.group}_FinalVersions.log
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
@@ -60,8 +60,8 @@ process FIND_NN_CLUSTER {
 
     stub:
     """
-    touch 07_${meta}_ClusterVersions.log
-    touch 07_${meta}_FinalVersions.log
+    touch 07_${meta.group}_ClusterVersions.log
+    touch 07_${meta.group}_FinalVersions.log
 
 
     cat <<-END_VERSIONS > versions.yml
