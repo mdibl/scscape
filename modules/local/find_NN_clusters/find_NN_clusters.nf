@@ -60,8 +60,8 @@ process FIND_NN_CLUSTER {
 
     stub:
     """
-    touch 07_${meta.group}_ClusterVersions.log
-    touch 07_${meta.group}_FinalVersions.log
+    touch 06_${meta.group}_ClusterVersions.log
+    touch 06_${meta.group}_FinalVersions.log
 
 
     cat <<-END_VERSIONS > versions.yml
