@@ -49,12 +49,12 @@ process DISPLAY_REDUCTION {
         $meta \
         $makeLoupe \
         $eula_agreement \
-        ${args} 2>&1 | tee > 07_${meta}_Execution.log
+        ${args} 2>&1 | tee > 08_${meta}_Execution.log
 
-    perl -i -pe 's/"//g;s/\\[\\d\\d?\\d?\\] //g' 07_${meta}_PlotValidation.log
+    perl -i -pe 's/"//g;s/\\[\\d\\d?\\d?\\] //g' 08_${meta}_PlotValidation.log
 
-    grep -i -E "R version " 07_${meta}_PlotVersions.log | perl -pe 's/ version /: \\"/g;s/ \\(.*/\\"/g' >> 07_${meta}_FinalVersions.log
-    perl -ne 'print if /other attached packages:/ .. /^\$/' 07_${meta}_PlotVersions.log | grep -v "other" | perl -pe 's/\\\\[.*]\\s+//g;s/\\s+/\\n/g' | grep -v "^\$" | perl -pe 's/_/: \\"/g;s/\$/\\"/' >> 07_${meta}_FinalVersions.log
+    grep -i -E "R version " 08_${meta}_PlotVersions.log | perl -pe 's/ version /: \\"/g;s/ \\(.*/\\"/g' >> 08_${meta}_FinalVersions.log
+    perl -ne 'print if /other attached packages:/ .. /^\$/' 08_${meta}_PlotVersions.log | grep -v "other" | perl -pe 's/\\\\[.*]\\s+//g;s/\\s+/\\n/g' | grep -v "^\$" | perl -pe 's/_/: \\"/g;s/\$/\\"/' >> 08_${meta}_FinalVersions.log
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
         R: \$(echo \$(R --version| head -n 1| grep -Eo "[0-9]+[^ ]*"| head -n 1) )
