@@ -36,7 +36,6 @@ process MAKE_SEURAT {
         $gene_identifier \\
         $genes_2_rm \\
         ${meta.id} \\
-        "${meta.groups}" \\
         $min_cells \\
         $min_features \\
         ${args} 2>&1 | tee > 00_${meta.id}_Execution.log
