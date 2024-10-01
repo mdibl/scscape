@@ -37,18 +37,18 @@ ch_multiqc_custom_methods_description = params.multiqc_methods_description ? fil
 // SUBWORKFLOW: Consisting of a mix of local and nf-core/modules
 //
 include { INPUT_CHECK          } from '../subworkflows/local/input_check'
-include { MAKE_SEURAT          } from '../modules/local/makeseurat/makeseurat.nf'
-include { NORMALIZE_QC         } from '../modules/local/normalize_qc/normalize_qc.nf'
-include { FIND_DOUBLETS        } from '../modules/local/doubletfinder/doubletfinder.nf'
-include { MERGE_SO             } from '../modules/local/merge/merge.nf'
-include { MERGE_SO as SCALE_SO } from '../modules/local/merge/merge.nf'
-include { RUN_PCA as PCA_MULT  } from '../modules/local/runpca/runpca.nf'
-include { RUN_PCA as PCA_SING  } from '../modules/local/runpca/runpca.nf'
-include { INTEGRATION          } from '../modules/local/integration/integration.nf'
-include { FIND_NN_CLUSTER      } from '../modules/local/find_NN_clusters/find_NN_clusters.nf'
-include { DISPLAY_REDUCTION    } from '../modules/local/plotting/plotting.nf'
-include { GZIP                 } from '../modules/local/gzip/gzip.nf'
-include { FEATURE_NAMING       } from '../modules/local/feature_naming/feature_naming.nf'
+include { MAKE_SEURAT          } from '../modules/local/makeseurat'
+include { NORMALIZE_QC         } from '../modules/local/normalize_qc'
+include { FIND_DOUBLETS        } from '../modules/local/doubletfinder'
+include { MERGE_SO             } from '../modules/local/merge'
+include { MERGE_SO as SCALE_SO } from '../modules/local/merge'
+include { RUN_PCA as PCA_MULT  } from '../modules/local/runpca'
+include { RUN_PCA as PCA_SING  } from '../modules/local/runpca'
+include { INTEGRATION          } from '../modules/local/integration'
+include { FIND_NN_CLUSTER      } from '../modules/local/find_NN_clusters'
+include { DISPLAY_REDUCTION    } from '../modules/local/plotting'
+include { GZIP                 } from '../modules/local/gzip'
+include { FEATURE_NAMING       } from '../modules/local/feature_naming'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -145,20 +145,43 @@ workflow SCSCAPE {
         ch_init_rds.rds.join(ch_updated_meta).set { ch_init_rds_meta }
         ch_validation_log.mix(ch_init_rds.log).set{ ch_validation_log }
     } else {
+        
         ch_init_rds = MAKE_SEURAT (
-        ch_updated_meta.map{ [ it[0], it[1] ] },
-        ch_updated_meta.map{ [ it[0], it[2] ] },
+        ch_updated_meta.map { [ it[0] , it[1] ] }
+                        .map{ meta, data ->
+                            meta = [ id: meta.id, groups: meta.groups.sort() ]
+                            return [ meta, data ]
+                            },
+        ch_updated_meta.map{ [ it[0] , it[2] ] }
+                        .map{ meta, gene_file ->
+                            meta = [ id: meta.id, groups: meta.groups.sort() ]
+                            return [ meta, gene_file ]
+                            },
         params.min_cells,
         params.min_features,
         params.gene_identifier
         )
+        ch_updated_meta.map{ meta, data, gene_file ->
+                            meta = [ id: meta.id, groups: meta.groups.sort() ]
+                            return [ meta, data, gene_file ]
+                            }
+                            .set { ch_updated_meta }
+
         ch_init_rds.rds.join(ch_updated_meta).set { ch_init_rds_meta }
         ch_validation_log.mix(ch_init_rds.log).set{ ch_validation_log }
     }
-
+    
     ch_normalized_qc = NORMALIZE_QC (
-        ch_init_rds_meta.map { [it[0], it[1]] },
-        ch_init_rds_meta.map { [it[0], it[3]] },
+        ch_init_rds_meta.map { [it[0], it[1]] }
+                        .map{ meta, data ->
+                            meta = [ id: meta.id, groups: meta.groups.sort() ]
+                            return [ meta, data ]
+                            },
+        ch_init_rds_meta.map { [it[0], it[3]] }
+                        .map{ meta, gene_file ->
+                            meta = [ id: meta.id, groups: meta.groups.sort() ]
+                            return [ meta, gene_file ]
+                            },
         params.nfeature_lower,
         params.nfeature_upper,
         params.ncount_lower,
@@ -166,12 +189,25 @@ workflow SCSCAPE {
         params.max_mito_pct,
         params.vars_2_regress
     )
+    ch_updated_meta.map{ meta, data, gene_file ->
+                            meta = [ id: meta.id, groups: meta.groups.sort() ]
+                            return [ meta, data, gene_file ]
+                            }
+                            .set { ch_updated_meta }
     ch_normalized_qc.rds.join(ch_updated_meta).set { ch_normalized_qc_meta }
     ch_validation_log.mix(ch_normalized_qc.log).set{ ch_validation_log }
 
     ch_doublet_filtered_rds = FIND_DOUBLETS (
-        ch_normalized_qc_meta.map { [it[0], it[1]] },
-        ch_normalized_qc_meta.map { [it[0], it[2]] },
+        ch_normalized_qc_meta.map { [it[0] , it[1]] }
+                            .map{ meta, data ->
+                            meta = [ id: meta.id, groups: meta.groups.sort() ]
+                            return [ meta, data ]
+                            },
+        ch_normalized_qc_meta.map { [it[0] , it[2]] }
+                            .map{ meta, gene_file ->
+                            meta = [ id: meta.id, groups: meta.groups.sort() ]
+                            return [ meta, gene_file ]
+                            },
         params.vars_2_regress
     )
     ch_validation_log.mix(ch_doublet_filtered_rds.log).set{ ch_validation_log }
@@ -261,7 +297,6 @@ workflow SCSCAPE {
     ch_dim_def_all = Channel.empty()
     ch_dim_def_all.mix(ch_pca_single_updated).set { ch_dim_def_all }
     ch_dim_def_all.mix(ch_dimensions_def).set { ch_dim_def_all }
-    ch_dim_def_all.view()
 
     ch_nn_clusters = FIND_NN_CLUSTER (
         ch_dim_def_all.map {meta, rds, log -> [meta, rds]},
@@ -278,7 +313,6 @@ workflow SCSCAPE {
                         .map { list -> list.findAll { it != null }}
                         .set { ch_nn_clusters_w_log }
 
-    ch_nn_clusters_w_log.view()
     DISPLAY_REDUCTION (
         ch_nn_clusters_w_log.map { [ it[0], it[2] ] },
         ch_nn_clusters_w_log.map { [ it[0], it[3] ] },

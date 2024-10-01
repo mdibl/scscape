@@ -21,7 +21,7 @@ process DISPLAY_REDUCTION {
     output:
     tuple val(meta), path ("*_FinalSO.rds"), emit: rds
     path("*Validation.log"),           emit: log
-    path("*.cloupe")
+    path("*.cloupe"),                  optional: true 
     path("*.pdf")
     path ("*FinalVersions.log"),                     emit: r_versions
     path('versions.yml'), emit: versions
