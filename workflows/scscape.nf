@@ -79,6 +79,7 @@ workflow SCSCAPE {
     ch_validation_log = Channel.empty()
 
     ch_samples = Channel.fromList(samplesheetToList(params.sample_sheet, "./assets/schema_input.json"))
+    ch_samples.dump(tag: "ch_samples")
 
     ch_gzip = GZIP(ch_samples.map { [ it[0], it[1]] })
     ch_gzip.zip
@@ -87,7 +88,8 @@ workflow SCSCAPE {
             .set {ch_samples_compressed}
 
 
-    ch_contrasts_file = Channel.from(file(params.segmentation_sheet))
+    ch_contrasts_file = Channel.value(file(params.segmentation_sheet))
+
     ch_contrasts_file.splitCsv ( header:true, sep:(params.segmentation_sheet.endsWith('tsv') ? '\t' : ','))
                     .flatMap().filter { !(it.toString().toUpperCase().contains("FALSE")) }
                     .map { it ->
@@ -104,7 +106,9 @@ workflow SCSCAPE {
                     .map { it.reverse() }
                     .set { ch_contrasts }
 
-    ch_contrasts.join(ch_samples_compressed).flatMap()
+    ch_contrasts.dump(tag: "ch_contrasts")
+
+    ch_contrasts.join(ch_samples).flatMap()
                 .map { it ->
                 if ( it instanceof LinkedHashMap ){
                     group_ls = new ArrayList()
@@ -145,7 +149,7 @@ workflow SCSCAPE {
         ch_init_rds.rds.join(ch_updated_meta).set { ch_init_rds_meta }
         ch_validation_log.mix(ch_init_rds.log).set{ ch_validation_log }
     } else {
-        
+
         ch_init_rds = MAKE_SEURAT (
         ch_updated_meta.map { [ it[0] , it[1] ] }
                         .map{ meta, data ->
@@ -170,7 +174,7 @@ workflow SCSCAPE {
         ch_init_rds.rds.join(ch_updated_meta).set { ch_init_rds_meta }
         ch_validation_log.mix(ch_init_rds.log).set{ ch_validation_log }
     }
-    
+
     ch_normalized_qc = NORMALIZE_QC (
         ch_init_rds_meta.map { [it[0], it[1]] }
                         .map{ meta, data ->

@@ -9,22 +9,20 @@ process GZIP {
         'quay.io/biocontainers/gzip:1.11' }"
 
     input:
-    tuple val(meta), path(sample_files)
+    tuple val(meta), path(file)
 
     output:
-    tuple val(meta), path (sample_files), emit: zip
-    path("versions.yml"), emit: versions
+    tuple val(meta), path ("*.zip"), optional: true,  emit: zip
+    path("versions.yml")                           , emit: versions
 
     when:
     task.ext.when == null || task.ext.when
 
     script:
     """
-    for file in ${sample_files}/*; do
-        if [[ \$file != *".gz"* ]]; then
-            gzip \$file
+        if [[ $file != *".gz"* ]]; then
+            gzip $file
         fi
-    done
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":

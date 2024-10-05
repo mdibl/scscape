@@ -9,6 +9,8 @@ Initial release of nf-core/scscape, created with the [nf-core](https://nf-co.re/
 
 ### `Added`
 
+- pipeline-level nf-tests by @sateeshperi [#]
+
 ### `Fixed`
 
 ### `Dependencies`
