@@ -11,15 +11,23 @@
                 "type": "string",
                 "meta": ["id"]
             },
-            "data_directory": {
+            "barcodes": {
                 "type": "string",
-                "format": "directory-path"
+                "format": "file-path"
+            },
+            "features": {
+                "type": "string",
+                "format": "file-path"
+            },
+            "matrix": {
+                "type": "string",
+                "format": "file-path"
             },
             "mt_cc_rm_genes": {
                 "type": "string",
                 "format": "file-path"
             }
         },
-        "required": ["id", "data_directory"]
+        "required": ["id", "barcodes", "features", "matrix", "mt_cc_rm_genes"]
     }
 }

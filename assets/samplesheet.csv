@@ -1,5 +1,5 @@
-id,data_directory,mt_cc_rm_genes
-0dpa,assets/subset_test_data/0dpa/,auxillaryGeneFiles/danioRerio.aux.features.csv
-1dpa,assets/subset_test_data/1dpa/,auxillaryGeneFiles/danioRerio.aux.features.csv
-2dpa,assets/subset_test_data/2dpa/,auxillaryGeneFiles/danioRerio.aux.features.csv
-4dpa,assets/subset_test_data/4dpa/,auxillaryGeneFiles/danioRerio.aux.features.csv
+id,barcodes,features,matrix,mt_cc_rm_genes
+0dpa,/assets/subset_test_data/0dpa/barcodes.tsv.gz,/assets/subset_test_data/0dpa/features.tsv.gz,/assets/subset_test_data/0dpa/matrix.mtx.gz,/assets/auxillaryGeneFiles/danioRerio.aux.features.csv
+1dpa,/assets/subset_test_data/1dpa/barcodes.tsv.gz,/assets/subset_test_data/1dpa/features.tsv.gz,/assets/subset_test_data/1dpa/matrix.mtx.gz,/assets/auxillaryGeneFiles/danioRerio.aux.features.csv
+2dpa,/assets/subset_test_data/2dpa/barcodes.tsv.gz,/assets/subset_test_data/2dpa/features.tsv.gz,/assets/subset_test_data/2dpa/matrix.mtx.gz,/assets/auxillaryGeneFiles/danioRerio.aux.features.csv
+4dpa,/assets/subset_test_data/4dpa/barcodes.tsv.gz,/assets/subset_test_data/4dpa/features.tsv.gz,/assets/subset_test_data/4dpa/matrix.mtx.gz,/assets/auxillaryGeneFiles/danioRerio.aux.features.csv
