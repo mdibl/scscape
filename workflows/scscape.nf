@@ -197,7 +197,7 @@ workflow SCSCAPE {
     ch_normalized_qc_meta.map { [ it[0] , it[1], it[2] ] }
                         .map{ meta, rds, data ->
                             meta = [ id: meta.id, groups: meta.groups.sort() ]
-                            return [ meta, rds, genes ]
+                            return [ meta, rds, data ]
                             }.set{ ch_sorted_meta_doublets }
 
     ch_sorted_meta_doublets.view()
