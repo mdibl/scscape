@@ -145,18 +145,16 @@ workflow SCSCAPE {
         ch_init_rds.rds.join(ch_updated_meta).set { ch_init_rds_meta }
         ch_validation_log.mix(ch_init_rds.log).set{ ch_validation_log }
     } else {
-        
+
+        ch_updated_meta.map { [ it[0] , it[1], it[2] ] }
+                        .map{ meta, data, genes ->
+                            meta = [ id: meta.id, groups: meta.groups.sort() ]
+                            return [ meta, data, genes ]
+                            }.set{ ch_sorted_meta_mk_seurat }
+
         ch_init_rds = MAKE_SEURAT (
-        ch_updated_meta.map { [ it[0] , it[1] ] }
-                        .map{ meta, data ->
-                            meta = [ id: meta.id, groups: meta.groups.sort() ]
-                            return [ meta, data ]
-                            },
-        ch_updated_meta.map{ [ it[0] , it[2] ] }
-                        .map{ meta, gene_file ->
-                            meta = [ id: meta.id, groups: meta.groups.sort() ]
-                            return [ meta, gene_file ]
-                            },
+        ch_sorted_meta_mk_seurat.map { [ it[0] , it[1] ] },
+        ch_sorted_meta_mk_seurat.map { [ it[0] , it[2] ] },
         params.min_cells,
         params.min_features,
         params.gene_identifier
@@ -170,18 +168,16 @@ workflow SCSCAPE {
         ch_init_rds.rds.join(ch_updated_meta).set { ch_init_rds_meta }
         ch_validation_log.mix(ch_init_rds.log).set{ ch_validation_log }
     }
-    
+
+    ch_init_rds_meta.map { [ it[0] , it[1], it[3] ] }
+                        .map{ meta, data, genes ->
+                            meta = [ id: meta.id, groups: meta.groups.sort() ]
+                            return [ meta, data, genes ]
+                            }.set{ ch_sorted_meta_norm_qc }
+
     ch_normalized_qc = NORMALIZE_QC (
-        ch_init_rds_meta.map { [it[0], it[1]] }
-                        .map{ meta, data ->
-                            meta = [ id: meta.id, groups: meta.groups.sort() ]
-                            return [ meta, data ]
-                            },
-        ch_init_rds_meta.map { [it[0], it[3]] }
-                        .map{ meta, gene_file ->
-                            meta = [ id: meta.id, groups: meta.groups.sort() ]
-                            return [ meta, gene_file ]
-                            },
+        ch_sorted_meta_norm_qc.map { [it[0], it[1]] },
+        ch_sorted_meta_norm_qc.map { [it[0], it[2]] },
         params.nfeature_lower,
         params.nfeature_upper,
         params.ncount_lower,
@@ -194,20 +190,19 @@ workflow SCSCAPE {
                             return [ meta, data, gene_file ]
                             }
                             .set { ch_updated_meta }
+
     ch_normalized_qc.rds.join(ch_updated_meta).set { ch_normalized_qc_meta }
     ch_validation_log.mix(ch_normalized_qc.log).set{ ch_validation_log }
 
+    ch_normalized_qc_meta.map { [ it[0] , it[1], it[2] ] }
+                        .map{ meta, data, genes ->
+                            meta = [ id: meta.id, groups: meta.groups.sort() ]
+                            return [ meta, data, genes ]
+                            }.set{ ch_sorted_meta_doublets }
+
     ch_doublet_filtered_rds = FIND_DOUBLETS (
-        ch_normalized_qc_meta.map { [it[0] , it[1]] }
-                            .map{ meta, data ->
-                            meta = [ id: meta.id, groups: meta.groups.sort() ]
-                            return [ meta, data ]
-                            },
-        ch_normalized_qc_meta.map { [it[0] , it[2]] }
-                            .map{ meta, gene_file ->
-                            meta = [ id: meta.id, groups: meta.groups.sort() ]
-                            return [ meta, gene_file ]
-                            },
+        ch_sorted_meta_doublets.map { [it[0] , it[1]] },
+        ch_sorted_meta_doublets.map { [it[0] , it[2]] },
         params.vars_2_regress
     )
     ch_validation_log.mix(ch_doublet_filtered_rds.log).set{ ch_validation_log }
