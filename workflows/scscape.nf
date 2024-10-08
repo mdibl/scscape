@@ -170,7 +170,7 @@ workflow SCSCAPE {
     }
 
     ch_init_rds_meta.map { [ it[0] , it[1], it[3] ] }
-                        .map{ meta, data, genes ->
+                        .map{ meta, rds, genes ->
                             meta = [ id: meta.id, groups: meta.groups.sort() ]
                             return [ meta, data, genes ]
                             }.set{ ch_sorted_meta_norm_qc }
@@ -195,11 +195,12 @@ workflow SCSCAPE {
     ch_validation_log.mix(ch_normalized_qc.log).set{ ch_validation_log }
 
     ch_normalized_qc_meta.map { [ it[0] , it[1], it[2] ] }
-                        .map{ meta, data, genes ->
+                        .map{ meta, rds, data ->
                             meta = [ id: meta.id, groups: meta.groups.sort() ]
                             return [ meta, data, genes ]
                             }.set{ ch_sorted_meta_doublets }
 
+    ch_sorted_meta_doublets.view()
     ch_doublet_filtered_rds = FIND_DOUBLETS (
         ch_sorted_meta_doublets.map { [it[0] , it[1]] },
         ch_sorted_meta_doublets.map { [it[0] , it[2]] },
