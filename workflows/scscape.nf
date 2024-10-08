@@ -172,7 +172,7 @@ workflow SCSCAPE {
     ch_init_rds_meta.map { [ it[0] , it[1], it[3] ] }
                         .map{ meta, rds, genes ->
                             meta = [ id: meta.id, groups: meta.groups.sort() ]
-                            return [ meta, data, genes ]
+                            return [ meta, rds, genes ]
                             }.set{ ch_sorted_meta_norm_qc }
 
     ch_normalized_qc = NORMALIZE_QC (
@@ -197,7 +197,7 @@ workflow SCSCAPE {
     ch_normalized_qc_meta.map { [ it[0] , it[1], it[2] ] }
                         .map{ meta, rds, data ->
                             meta = [ id: meta.id, groups: meta.groups.sort() ]
-                            return [ meta, data, genes ]
+                            return [ meta, rds, genes ]
                             }.set{ ch_sorted_meta_doublets }
 
     ch_sorted_meta_doublets.view()
