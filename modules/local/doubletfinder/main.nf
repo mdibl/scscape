@@ -39,7 +39,7 @@ process FIND_DOUBLETS {
         ${meta.id} \\
         $n_features \\
         $scale_method \\
-        ${args}
+        ${args} 2>&1 | tee > 02_${meta.group}_Execution.log
 
     perl -i -pe 's/"//g;s/\\[\\d\\d?\\d?\\] //g' 02_${meta.id}_DoubletsRmValidation.log
 
