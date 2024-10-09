@@ -55,7 +55,7 @@ params.scaleMethod <- args[6]
 # ╠═ Preparation for Find Doublets ═╣
 # ╚═════════════════════════════════╝
 message("Preparing for Find Doublets")
-# read in .rds  
+# read in .rds
 samp <- readRDS(params.SeuratObject)
 
 # create a list of all genes
@@ -79,7 +79,7 @@ if (params.scaleMethod == "SD"){
         samp <- RunPCA(samp,  npcs = 100)
     }
 }
-    
+
 # Generate Elbow Plots and Calculate PCs to use
 Elbow <- ElbowPlot(samp,  ndims = 100, reduction = "pca")
 ElbowPoints <- Elbow$data
@@ -146,12 +146,12 @@ ggplot(df, aes(x, y)) +
     geom_line(aes(x = seq(1,100), y = ElbowPoints[[ident]]), color = "green") +
     xlab("PC") +
     ylab("Std Dev") +
-    geom_vline(xintercept = params.pcMax, linetype="dotted", 
+    geom_vline(xintercept = params.pcMax, linetype="dotted",
                color = "red", size=1.5) +
     ggtitle(paste0("Loess Regression of Std Dev ~ PC  :  PC Chosen = ", params.pcMax))
 dev.off()
 
-# Find Neighbors 
+# Find Neighbors
 samp <- FindNeighbors(samp, dims = 1:params.pcMax, reduction = "pca")
 
 # Find Clusters
@@ -205,8 +205,10 @@ samp <- subset(samp, subset = !!as.name(doubletmeta) == "Singlet"  )
 # ╠═ Metadata Cleanup ═╣
 # ╚════════════════════╝
 message("Cleaning up Metadata in Seurat Object")
-samp[[doubletmeta]] <- NULL
-samp[["RNA_snn_res.0.8"]] <- NULL
+try(expr = {samp[[doubletmeta]] <- NULL})
+try(expr = {samp[["RNA_snn_res.0.8"]] <- NULL})
+try(expr = {samp[["SCT_snn_res.0.8"]] <- NULL})
+
 
 # ╔══════════════════════╗
 # ╠═ Save Seurat Object ═╣
