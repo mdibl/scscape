@@ -21,7 +21,7 @@ process DISPLAY_REDUCTION {
     output:
     tuple val(meta), path ("*_FinalSO.rds"), emit: rds
     path("*Validation.log"),           emit: log
-    path("*.cloupe"),                  optional: true 
+    path("*.cloupe"),                  optional: true
     path("*.pdf")
     path ("*FinalVersions.log"),                     emit: r_versions
     path('versions.yml'), emit: versions
@@ -49,7 +49,7 @@ process DISPLAY_REDUCTION {
         $meta \
         $makeLoupe \
         $eula_agreement \
-        ${args} 2>&1 | tee > 08_${meta}_Execution.log
+        ${args} 2>&1 | tee 08_${meta}_Execution.log
 
     perl -i -pe 's/"//g;s/\\[\\d\\d?\\d?\\] //g' 08_${meta}_PlotValidation.log
 

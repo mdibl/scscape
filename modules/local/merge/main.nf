@@ -33,7 +33,7 @@ process MERGE_SO {
         $vars_2_regress \\
         $n_features \\
         $scale_method \\
-        ${args} 2>&1 | tee > 03_${meta}_Execution.log
+        ${args} 2>&1 | tee 03_${meta}_Execution.log
 
     perl -i -pe 's/"//g;s/\\[\\d\\d?\\d?\\] //g' 03_${meta}_MergeValidation.log
 

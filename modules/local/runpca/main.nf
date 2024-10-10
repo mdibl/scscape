@@ -30,7 +30,7 @@ process RUN_PCA {
         $rds \\
         ${pcMax} \\
         ${meta} \\
-        ${args} 2>&1 | tee > 04_${meta}_Execution.log
+        ${args} 2>&1 | tee 04_${meta}_Execution.log
 
     perl -i -pe 's/"//g;s/\\[\\d\\d?\\d?\\] //g' 04_${meta}_PCAValidation.log
 

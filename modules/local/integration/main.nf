@@ -31,7 +31,7 @@ process INTEGRATION {
         $integration_method \\
         ${meta} \\
         $scale_method \\
-        ${args} 2>&1 | tee > 05_${meta}_Execution.log
+        ${args} 2>&1 | tee 05_${meta}_Execution.log
 
     perl -i -pe 's/"//g;s/\\[\\d\\d?\\d?\\] //g' 05_${meta}_IntegrateValidation.log
 

@@ -45,7 +45,7 @@ process FIND_NN_CLUSTER {
         ${integration_method} \\
         ${meta.group} \\
         $scale_method \\
-        ${args} 2>&1 | tee > 06_${meta.group}_Execution.log
+        ${args} 2>&1 | tee 06_${meta.group}_Execution.log
 
     perl -i -pe 's/"//g;s/\\[\\d\\d?\\d?\\] //g' 06_${meta.group}_ClusterValidation.log
 

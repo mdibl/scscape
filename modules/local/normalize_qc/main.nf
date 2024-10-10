@@ -55,7 +55,7 @@ process NORMALIZE_QC {
         $rds \\
         ${meta.id} \\
         $run_cc_score \\
-        ${args} 2>&1 | tee > 01_${meta.id}_Execution.log
+        ${args} 2>&1 | tee 01_${meta.id}_Execution.log
 
     perl -i -pe 's/"//g;s/\\[\\d\\d?\\d?\\] //g' 01_${meta.id}_NormQCValidation.log
 
