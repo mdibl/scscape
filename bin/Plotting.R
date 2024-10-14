@@ -187,7 +187,9 @@ try_generate_loupe_file <- function(MergedSO, params.ProjectName, max_tries = 5)
             if (i < max_tries) {
                 Sys.sleep(60)  # Wait for 1 minute before retrying
             } else {
-                stop("Failed to generate Loupe file after ", max_tries, " attempts.")
+                message(paste0("Failed to generate Loupe file after ", max_tries, " attempts."))
+                message("Loupe browser will need to be generated externally.")
+                return(FALSE)
             }
         })
     }
