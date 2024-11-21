@@ -20,12 +20,13 @@ process DISPLAY_REDUCTION {
 
     output:
     tuple val(meta), path ("*_FinalSO.rds"), emit: rds
-    path("*Validation.log"),           emit: log
-    path("*.cloupe"),                  optional: true
+    path("*Validation.log"), emit: log
+    path("*.cloupe"), optional: true
     path("*.pdf")
-    path ("*FinalVersions.log"),                     emit: r_versions
+    path ("*FinalVersions.log"), emit: r_versions
     path('versions.yml'), emit: versions
     path("*Execution.log"), emit: exec
+    path("*_MetaTable.tsv"), emit: meta
 
     when:
     task.ext.when == null || task.ext.when
