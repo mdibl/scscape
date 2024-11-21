@@ -51,7 +51,7 @@ params.ProjectName <- args[5]
 # Make Loupe File T/F
 params.MakeLoupe <- args[6]
 
-# Loupe EULA 
+# Loupe EULA
 params.10xEULA <- args[7]
 
 # ╔════════════════════╗
@@ -148,7 +148,7 @@ if (params.IntegrationMethod != "NULL"){
     p2 <- FeaturePlot(MergedSO, reduction = paste0("tsne.",params.IntegrationMethod), pt.size = (-0.00001837*length(MergedSO$orig.ident))+1, features = "nFeature_RNA", order = T) + scale_color_viridis(limits =c(min(MergedSO$nFeature_RNA),max(MergedSO$nFeature_RNA)), direction = -1)
     p3 <- FeaturePlot(MergedSO, reduction = paste0("tsne.",params.IntegrationMethod), pt.size = (-0.00001837*length(MergedSO$orig.ident))+1, features = "nCount_RNA", order = T) + scale_color_viridis(limits =c(min(MergedSO$nCount_RNA),max(MergedSO$nCount_RNA)), direction = -1)
     p4 <- FeaturePlot(MergedSO, reduction = paste0("tsne.",params.IntegrationMethod), pt.size = (-0.00001837*length(MergedSO$orig.ident))+1, features = "percent.mt", order = T) + scale_color_viridis(limits =c(min(MergedSO$percent.mt),max(MergedSO$percent.mt)), direction = -1)
-    
+
     print(p1 + p2 + p3 + p4 + plot_layout(design = Page1layout))
     try(expr = {print(DimPlot(object = MergedSO, reduction = paste0("tsne.",params.IntegrationMethod), pt.size =(-0.00007653*length(MergedSO$orig.ident))+4, label = T, group.by = "CIscCATCH"))})
     for (i in params.Resolutions){
@@ -166,28 +166,45 @@ if(params.IntegrationMethod == "NULL"){
 # ╚═══════════════════╝
 message("Generating Loupe File")
 EULAmessage <- NULL
+generate_loupe_file <- function(MergedSO, params.ProjectName) {
+    library(loupeR)
+    loupeR::setup()
+    create_loupe(count_mat = MergedSO@assays$RNA$counts,
+                 clusters = select_clusters(MergedSO),
+                 projections = select_projections(MergedSO),
+                 output_name = params.ProjectName
+    )
+}
+
+try_generate_loupe_file <- function(MergedSO, params.ProjectName, max_tries = 5) {
+    for (i in 1:max_tries) {
+        tryCatch({
+            generate_loupe_file(MergedSO, params.ProjectName)
+            message("Loupe file generated successfully.")
+            return(TRUE)
+        }, error = function(e) {
+            message(paste("Attempt", i, "failed:", e$message))
+            if (i < max_tries) {
+                Sys.sleep(60)  # Wait for 1 minute before retrying
+            } else {
+                message(paste0("Failed to generate Loupe file after ", max_tries, " attempts."))
+                message("Loupe browser will need to be generated externally.")
+                return(FALSE)
+            }
+        })
+    }
+}
+
 if(toupper(params.MakeLoupe) == "TRUE"){
     if (toupper(params.10xEULA) == "AGREE"){
-        library(loupeR)
-        loupeR::setup()
-        create_loupe(count_mat = MergedSO@assays$RNA$counts,
-                     clusters = select_clusters(MergedSO),
-                     projections = select_projections(MergedSO),
-                     output_name = params.ProjectName
-        )
+        try_generate_loupe_file(MergedSO, params.ProjectName)
     } else {
         EULAmessage <- "WARNING: Loupe File set to TRUE but you have not agreed to the 10x EULA -- Set params.10xEULA to Agree to create Loupe File."
         message(EULAmessage)
     }
 }else {
     if (toupper(params.10xEULA) == "AGREE"){
-        library(loupeR)
-        loupeR::setup()
-        create_loupe(count_mat = MergedSO@assays$RNA$counts,
-                     clusters = select_clusters(MergedSO),
-                     projections = select_projections(MergedSO),
-                     output_name = params.ProjectName
-        )
+        try_generate_loupe_file(MergedSO, params.ProjectName)
         EULAmessage <- "NOTE: Loupe File set to FALSE but you have agreed to the 10x EULA -- Loupe File has been made."
         message(EULAmessage)
     }
