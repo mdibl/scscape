@@ -227,7 +227,7 @@ if (params.IntegrationMethod != "NULL"){
     meta_table <- cbind(meta_table, MergedSO@reductions[["tsne.unintegrated"]]@cell.embeddings)
     meta_table <- cbind(meta_table, MergedSO@reductions[["umap.unintegrated"]]@cell.embeddings)
 }
-meta_table <- cbind(meta_table, as.data.table(MergedSO@reductions$pca@cell.embeddings))
+meta_table <- cbind(meta_table, as.data.frame(MergedSO@reductions$pca@cell.embeddings))
 write.csv(file = paste0("08_",params.ProjectName,"_MetaTable.tsv"), meta_table, col.names = T)
 
 
