@@ -220,7 +220,6 @@ SaveSeuratRds(MergedSO, file = paste0("08",params.ProjectName, "_FinalSO.rds"))
 # ╠═ Save Meta Data Table ═╣
 # ╚════════════════════════╝
 meta_table <- MergedSO@meta.data
-meta_table <- cbind(meta_table, as.data.table(MergedSO@reductions$pca@cell.embeddings))
 if (params.IntegrationMethod != "NULL"){
     meta_table <- cbind(meta_table, MergedSO@reductions[[paste0("tsne.",params.IntegrationMethod)]]@cell.embeddings)
     meta_table <- cbind(meta_table, MergedSO@reductions[[paste0("umap.",params.IntegrationMethod)]]@cell.embeddings)
@@ -228,7 +227,8 @@ if (params.IntegrationMethod != "NULL"){
     meta_table <- cbind(meta_table, MergedSO@reductions[["tsne.unintegrated"]]@cell.embeddings)
     meta_table <- cbind(meta_table, MergedSO@reductions[["umap.unintegrated"]]@cell.embeddings)
 }
-write.csv(file = paste0("08_",params.ProjectName,"_MetaTable.tsv"), meta_table, col.names = T)
+meta_table <- cbind(meta_table, as.data.frame(MergedSO@reductions$pca@cell.embeddings))
+write.csv(file = paste0("08_",params.ProjectName,"_MetaTable.tsv"), meta_table, quote = F)
 
 
 
