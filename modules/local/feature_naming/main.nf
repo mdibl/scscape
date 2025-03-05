@@ -9,8 +9,7 @@ process FEATURE_NAMING {
         'quay.io/rgrindle/convert_gn_nms:latest' }"
 
     input:
-    tuple val(meta), path(sample_files)
-    tuple val(meta), path(gene_list)
+    tuple val(meta), path(sample_files), path(gene_list)
 
     output:
     tuple val(meta), path (sample_files), path ("AuxGeneList.csv"), emit: data

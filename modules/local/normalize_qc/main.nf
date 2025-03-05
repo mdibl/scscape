@@ -9,8 +9,7 @@ process NORMALIZE_QC {
         'docker.io/mdiblbiocore/seurat:latest' }"
 
     input:
-    tuple val(meta), path (rds)
-    tuple val(meta), path (mt_cc_genes)
+    tuple val(meta), path (rds), path (mt_cc_genes)
     val nfeature_lower
     val nfeature_upper
     val ncount_lower

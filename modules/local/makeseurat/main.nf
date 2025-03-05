@@ -9,8 +9,7 @@ process MAKE_SEURAT {
         'docker.io/mdiblbiocore/seurat:latest' }"
 
     input:
-    tuple val(meta), path (data_directory)
-    tuple val(meta), path (genes_2_rm)
+    tuple val(meta), path (data_directory), path (genes_2_rm)
     val min_cells
     val min_features
     val gene_identifier

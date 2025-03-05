@@ -9,8 +9,7 @@ process FIND_NN_CLUSTER {
         'docker.io/mdiblbiocore/seurat:latest' }"
 
     input:
-    tuple val(meta), path (rds)
-    tuple val(meta), path (validation_log)
+    tuple val(meta), path (rds), path (validation_log)
     val resolutions
     val integration_tool
 

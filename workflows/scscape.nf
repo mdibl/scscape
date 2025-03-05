@@ -88,6 +88,7 @@ workflow SCSCAPE {
 
 
     ch_contrasts_file = Channel.from(file(params.segmentation_sheet))
+
     ch_contrasts_file.splitCsv ( header:true, sep:(params.segmentation_sheet.endsWith('tsv') ? '\t' : ','))
                     .flatMap().filter { !(it.toString().toUpperCase().contains("FALSE")) }
                     .map { it ->
@@ -103,6 +104,7 @@ workflow SCSCAPE {
                     .buffer { it instanceof LinkedHashMap }
                     .map { it.reverse() }
                     .set { ch_contrasts }
+    ch_contrasts.view()
 
     ch_contrasts.join(ch_samples_compressed).flatMap()
                 .map { it ->
@@ -128,16 +130,14 @@ workflow SCSCAPE {
                 .buffer { it instanceof LinkedHashMap }
                 .map { it.reverse() }
                 .set { ch_updated_meta }
-
+    ch_updated_meta.view()
 
     if (params.gene_identifier.toUpperCase() == "COMBINE"){
         ch_updated_features = FEATURE_NAMING(
-            ch_updated_meta.map { [ it[0], it[1] ] },
-            ch_updated_meta.map { [ it[0], it[2] ] }
+            ch_updated_meta.map { [ it[0], it[1],  it[2] ] },
         )
         ch_init_rds = MAKE_SEURAT (
-        ch_updated_features.data.map{ [ it[0], it[1] ] },
-        ch_updated_features.data.map{ [ it[0], it[2] ] },
+        ch_updated_features.data.map{ [ it[0], it[1], it[2] ] },
         params.min_cells,
         params.min_features,
         params.gene_identifier
@@ -153,8 +153,7 @@ workflow SCSCAPE {
                             }.set{ ch_sorted_meta_mk_seurat }
 
         ch_init_rds = MAKE_SEURAT (
-        ch_sorted_meta_mk_seurat.map { [ it[0] , it[1] ] },
-        ch_sorted_meta_mk_seurat.map { [ it[0] , it[2] ] },
+        ch_sorted_meta_mk_seurat.map { [ it[0] , it[1], it[2] ] },
         params.min_cells,
         params.min_features,
         params.gene_identifier
@@ -176,8 +175,7 @@ workflow SCSCAPE {
                             }.set{ ch_sorted_meta_norm_qc }
 
     ch_normalized_qc = NORMALIZE_QC (
-        ch_sorted_meta_norm_qc.map { [it[0], it[1]] },
-        ch_sorted_meta_norm_qc.map { [it[0], it[2]] },
+        ch_sorted_meta_norm_qc.map { [it[0], it[1], it[2]] },
         params.nfeature_lower,
         params.nfeature_upper,
         params.ncount_lower,
@@ -202,8 +200,7 @@ workflow SCSCAPE {
 
     ch_sorted_meta_doublets.view()
     ch_doublet_filtered_rds = FIND_DOUBLETS (
-        ch_sorted_meta_doublets.map { [it[0] , it[1]] },
-        ch_sorted_meta_doublets.map { [it[0] , it[2]] },
+        ch_sorted_meta_doublets.map { [it[0] , it[1], it[2]] },
         params.vars_2_regress
     )
     ch_validation_log.mix(ch_doublet_filtered_rds.log).set{ ch_validation_log }
@@ -295,8 +292,7 @@ workflow SCSCAPE {
     ch_dim_def_all.mix(ch_dimensions_def).set { ch_dim_def_all }
 
     ch_nn_clusters = FIND_NN_CLUSTER (
-        ch_dim_def_all.map {meta, rds, log -> [meta, rds]},
-        ch_dim_def_all.map {meta, rds, log -> [meta, log]},
+        ch_dim_def_all.map {meta, rds, log -> [meta, rds, log]},
         params.resolutions,
         params.integration_method
     )
@@ -310,8 +306,7 @@ workflow SCSCAPE {
                         .set { ch_nn_clusters_w_log }
 
     DISPLAY_REDUCTION (
-        ch_nn_clusters_w_log.map { [ it[0], it[2] ] },
-        ch_nn_clusters_w_log.map { [ it[0], it[3] ] },
+        ch_nn_clusters_w_log.map { [ it[0], it[2], it[3] ] },
         ch_nn_clusters_w_log.map { it[1] },
         params.resolutions,
         params.makeLoupe,

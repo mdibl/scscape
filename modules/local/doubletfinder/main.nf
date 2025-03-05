@@ -10,8 +10,7 @@ process FIND_DOUBLETS {
 
     input:
 
-    tuple val(meta), path (rds)
-    tuple val(meta), path (data_directory)
+    tuple val(meta), path (rds), path (data_directory)
     val vars_2_regress
 
 

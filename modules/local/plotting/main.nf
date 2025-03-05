@@ -9,8 +9,7 @@ process DISPLAY_REDUCTION {
         'docker.io/mdiblbiocore/seurat:latest' }"
 
     input:
-    tuple val(meta), path (rds_file)
-    tuple val(meta), path(validation_log)
+    tuple val(meta), path (rds_file), path(validation_log)
     val integrated
     val resolutions
     val makeLoupe

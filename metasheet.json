@@ -1,0 +1,182 @@
+{
+    "meta": [
+      "id",
+      "Age",
+      "Sex",
+      "Genotype",
+      "Harvest Day",
+      "Purpose"
+    ],
+    "groups": {
+      "group_1": [
+        "L160-E",
+        "K533-A",
+        "K533-C",
+        "K533-E",
+        "K532-D",
+        "K532-G"
+      ],
+      "group_2": [
+        "L167-A",
+        "L167-B",
+        "L167-C",
+        "L166-A",
+        "L166-B"
+      ]
+    },
+    "K532-D": {
+      "groups": [
+        "group_1"
+      ],
+      "meta_content": [
+        "K532-D",
+        "E17.5",
+        "unknown",
+        "WT",
+        "10/6/23",
+        "Exp."
+      ]
+    },
+    "K532-G": {
+      "groups": [
+        "group_1"
+      ],
+      "meta_content": [
+        "K532-G",
+        "E17.5",
+        "unknown",
+        "KO",
+        "10/6/23",
+        "Exp."
+      ]
+    },
+    "K533-A": {
+      "groups": [
+        "group_1"
+      ],
+      "meta_content": [
+        "K533-A",
+        "E17.5",
+        "unknown",
+        "Het",
+        "9/15/23",
+        "optimization"
+      ]
+    },
+    "K533-C": {
+      "groups": [
+        "group_1"
+      ],
+      "meta_content": [
+        "K533-C",
+        "E17.5",
+        "unknown",
+        "WT",
+        "9/15/23",
+        "Exp."
+      ]
+    },
+    "K533-E": {
+      "groups": [
+        "group_1"
+      ],
+      "meta_content": [
+        "K533-E",
+        "E17.5",
+        "unknown",
+        "KO",
+        "9/15/23",
+        "Exp."
+      ]
+    },
+    "L160-E": {
+      "groups": [
+        "group_1"
+      ],
+      "meta_content": [
+        "L160-E",
+        "E17.5",
+        "unknown",
+        "Het",
+        "9/15/23",
+        "optimization"
+      ]
+    },
+    "L166-A": {
+      "groups": [
+        "group_2"
+      ],
+      "meta_content": [
+        "L166-A",
+        "P20",
+        "F",
+        "WT (MMI)",
+        "10/2/23",
+        "Exp."
+      ]
+    },
+    "L166-B": {
+      "groups": [
+        "group_2"
+      ],
+      "meta_content": [
+        "L166-B",
+        "P20",
+        "F",
+        "WT (MMI)",
+        "10/2/23",
+        "Exp."
+      ]
+    },
+    "L167-A": {
+      "groups": [
+        "group_2"
+      ],
+      "meta_content": [
+        "L167-A",
+        "P20",
+        "F",
+        "WT (Ctrl)",
+        "10/2/23",
+        "optimization"
+      ]
+    },
+    "L167-B": {
+      "groups": [
+        "group_2"
+      ],
+      "meta_content": [
+        "L167-B",
+        "P20",
+        "F",
+        "WT (Ctrl)",
+        "10/2/23",
+        "Exp."
+      ]
+    },
+    "L167-C": {
+      "groups": [
+        "group_2"
+      ],
+      "meta_content": [
+        "L167-C",
+        "P20",
+        "F",
+        "WT (Ctrl)",
+        "10/2/23",
+        "Exp."
+      ]
+    },
+    "integration_layers": {
+      "group_1": {
+        "columns": [
+          "Sex"
+        ]
+      },
+      "group_2": {
+        "columns": [
+          "Sex"
+        ]
+      }
+    }
+  }
