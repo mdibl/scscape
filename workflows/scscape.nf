@@ -88,6 +88,9 @@ workflow SCSCAPE {
 
 
     ch_contrasts_file = Channel.from(file(params.segmentation_sheet))
+    ch_contrasts_file.splitJson()
+    .flatMap()
+    .view()
 
     ch_contrasts_file.splitCsv ( header:true, sep:(params.segmentation_sheet.endsWith('tsv') ? '\t' : ','))
                     .flatMap().filter { !(it.toString().toUpperCase().contains("FALSE")) }
