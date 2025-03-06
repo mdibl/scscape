@@ -86,12 +86,54 @@ workflow SCSCAPE {
             .map { meta, gz, orig, features -> [ meta, gz, features ] }
             .set {ch_samples_compressed}
 
-
+    /*
+    def lhm = new LinkedHashMap()
     ch_contrasts_file = Channel.from(file(params.segmentation_sheet))
-    ch_contrasts_file.splitJson()
-    .flatMap()
-    .view()
+    ch_contrasts_file.splitJson(path: 'meta')
+    .map{ it -> if (it instanceof String){
+        lhm[it] = ''
+        return lhm
+    } }
+    .unique()
+    .set{ ch_meta_init }
 
+
+    ch_contrasts_file.splitJson(path: 'samples')
+    .flatMap()
+    .map { it -> it['value'] }
+    .flatMap()
+    .buffer( size: 4 )
+    .set{ ch_samples_init }
+
+    ch_meta_init.combine(ch_samples_init)
+    .map { headers, id, data, groups, content ->
+
+        def dataValues = data.toString().replaceAll("data=\\[|\\]", "").split(",")
+        def groupsValues = groups.toString().replaceAll("groups=\\[|\\]", "").split(",")
+
+        def metaStr = content.toString()
+        def metaMatch = metaStr =~ /meta_content=\[(.*)\]/
+        def metaContentValues = []
+        if (metaMatch.find()) {
+            metaContentValues = metaMatch[0][1].split(",").collect { it.trim() }
+        }
+
+        def meta = new LinkedHashMap()
+
+        def cleanHeaders = headers.collect { it.toString().replace("=", "").trim() }
+
+        cleanHeaders.eachWithIndex { header, i ->
+            if (i < metaContentValues.size()) {
+                meta[header] = metaContentValues[i]
+            }
+            meta['groups'] = groupsValues
+        }
+
+        return [meta, dataValues]
+    }
+    .view()
+    */
+    ch_contrasts_file = Channel.from(file(params.segmentation_sheet))
     ch_contrasts_file.splitCsv ( header:true, sep:(params.segmentation_sheet.endsWith('tsv') ? '\t' : ','))
                     .flatMap().filter { !(it.toString().toUpperCase().contains("FALSE")) }
                     .map { it ->
@@ -350,7 +392,7 @@ workflow SCSCAPE {
     //    .set { ch_validation_log }
 
     validation = ch_validation_log.collectFile( name: "val.log" ).map{ it -> it.text }.toList()
-
+    */
 }
 
 

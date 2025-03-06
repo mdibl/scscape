@@ -1,6 +1,6 @@
 {
     "meta": [
-      "Sample ID",
+      "id",
       "Age",
       "Sex",
       "Genotype",
@@ -8,174 +8,166 @@
       "Purpose"
     ],
     "groups": {
-      "group_1": [
-        "L160-E",
-        "K533-A",
-        "K533-C",
-        "K533-E",
-        "K532-D",
-        "K532-G"
+      "Female": [
+        "Sample_05",
+        "Sample_06",
+        "Sample_07",
+        "Sample_08"
       ],
-      "group_2": [
-        "L167-A",
-        "L167-B",
-        "L167-C",
-        "L166-A",
-        "L166-B"
-      ]
-    },
-    "K532-D": {
-      "groups": [
-        "group_1"
-      ],
-      "meta_content": [
-        "K532-D",
-        "E17.5",
-        "unknown",
-        "WT",
-        "10/6/23",
-        "Exp."
-      ]
-    },
-    "K532-G": {
-      "groups": [
-        "group_1"
-      ],
-      "meta_content": [
-        "K532-G",
-        "E17.5",
-        "unknown",
-        "KO",
-        "10/6/23",
-        "Exp."
-      ]
-    },
-    "K533-A": {
-      "groups": [
-        "group_1"
-      ],
-      "meta_content": [
-        "K533-A",
-        "E17.5",
-        "unknown",
-        "Het",
-        "9/15/23",
-        "optimization"
-      ]
-    },
-    "K533-C": {
-      "groups": [
-        "group_1"
-      ],
-      "meta_content": [
-        "K533-C",
-        "E17.5",
-        "unknown",
-        "WT",
-        "9/15/23",
-        "Exp."
-      ]
-    },
-    "K533-E": {
-      "groups": [
-        "group_1"
-      ],
-      "meta_content": [
-        "K533-E",
-        "E17.5",
-        "unknown",
-        "KO",
-        "9/15/23",
-        "Exp."
-      ]
-    },
-    "L160-E": {
-      "groups": [
-        "group_1"
-      ],
-      "meta_content": [
-        "L160-E",
-        "E17.5",
-        "unknown",
-        "Het",
-        "9/15/23",
-        "optimization"
-      ]
-    },
-    "L166-A": {
-      "groups": [
-        "group_2"
-      ],
-      "meta_content": [
-        "L166-A",
-        "P20",
-        "F",
-        "WT (MMI)",
-        "10/2/23",
-        "Exp."
-      ]
-    },
-    "L166-B": {
-      "groups": [
-        "group_2"
-      ],
-      "meta_content": [
-        "L166-B",
-        "P20",
-        "F",
-        "WT (MMI)",
-        "10/2/23",
-        "Exp."
-      ]
-    },
-    "L167-A": {
-      "groups": [
-        "group_2"
-      ],
-      "meta_content": [
-        "L167-A",
-        "P20",
-        "F",
-        "WT (Ctrl)",
-        "10/2/23",
-        "optimization"
-      ]
-    },
-    "L167-B": {
-      "groups": [
-        "group_2"
-      ],
-      "meta_content": [
-        "L167-B",
-        "P20",
-        "F",
-        "WT (Ctrl)",
-        "10/2/23",
-        "Exp."
-      ]
-    },
-    "L167-C": {
-      "groups": [
-        "group_2"
-      ],
-      "meta_content": [
-        "L167-C",
-        "P20",
-        "F",
-        "WT (Ctrl)",
-        "10/2/23",
-        "Exp."
+      "Male": [
+        "Sample_01",
+        "Sample_02",
+        "Sample_03",
+        "Sample_04"
       ]
     },
     "integration_layers": {
-      "group_1": {
+      "Female": {
         "columns": [
-          "Sex"
+          "Age"
         ]
       },
-      "group_2": {
+      "Male": {
         "columns": [
-          "Sex"
+          "Age"
+        ]
+      }
+    },
+    "samples": {
+      "Sample_01": {
+        "data": [
+          "<data_directory>",
+          "<file_directory>"
+        ],
+        "groups": [
+          "Male"
+        ],
+        "meta_content": [
+          "Sample_01",
+          "2 days",
+          "M",
+          "WT",
+          "Day 4",
+          "scRNAseq"
+        ]
+      },
+      "Sample_02": {
+        "data": [
+          "<data_directory>",
+          "<file_directory>"
+        ],
+        "groups": [
+          "Male"
+        ],
+        "meta_content": [
+          "Sample_02",
+          "2 days",
+          "M",
+          "HET",
+          "Day 4",
+          "scRNAseq"
+        ]
+      },
+      "Sample_03": {
+        "data": [
+          "<data_directory>",
+          "<file_directory>"
+        ],
+        "groups": [
+          "Male"
+        ],
+        "meta_content": [
+          "Sample_03",
+          "3 days",
+          "M",
+          "WT",
+          "Day 4",
+          "scRNAseq"
+        ]
+      },
+      "Sample_04": {
+        "data": [
+          "<data_directory>",
+          "<file_directory>"
+        ],
+        "groups": [
+          "Male"
+        ],
+        "meta_content": [
+          "Sample_04",
+          "3 days",
+          "M",
+          "HET",
+          "Day 4",
+          "scRNAseq"
+        ]
+      },
+      "Sample_05": {
+        "data": [
+          "<data_directory>",
+          "<file_directory>"
+        ],
+        "groups": [
+          "Female"
+        ],
+        "meta_content": [
+          "Sample_05",
+          "2 days",
+          "F",
+          "WT",
+          "Day 4",
+          "scRNAseq"
+        ]
+      },
+      "Sample_06": {
+        "data": [
+          "<data_directory>",
+          "<file_directory>"
+        ],
+        "groups": [
+          "Female"
+        ],
+        "meta_content": [
+          "Sample_06",
+          "2 days",
+          "F",
+          "HET",
+          "Day 4",
+          "scRNAseq"
+        ]
+      },
+      "Sample_07": {
+        "data": [
+          "<data_directory>",
+          "<file_directory>"
+        ],
+        "groups": [
+          "Female"
+        ],
+        "meta_content": [
+          "Sample_07",
+          "3 days",
+          "F",
+          "WT",
+          "Day 5",
+          "scRNAseq"
+        ]
+      },
+      "Sample_08": {
+        "data": [
+          "<data_directory>",
+          "<file_directory>"
+        ],
+        "groups": [
+          "Female"
+        ],
+        "meta_content": [
+          "Sample_08",
+          "3 days",
+          "F",
+          " HET",
+          "Day 5",
+          "scRNAseq"
         ]
       }
     }
