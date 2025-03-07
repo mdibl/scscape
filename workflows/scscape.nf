@@ -86,7 +86,7 @@ workflow SCSCAPE {
             .map { meta, gz, orig, features -> [ meta, gz, features ] }
             .set {ch_samples_compressed}
 
-    /*
+
     def lhm = new LinkedHashMap()
     ch_contrasts_file = Channel.from(file(params.segmentation_sheet))
     ch_contrasts_file.splitJson(path: 'meta')
@@ -131,55 +131,14 @@ workflow SCSCAPE {
 
         return [meta, dataValues]
     }
-    .view()
-    */
-    ch_contrasts_file = Channel.from(file(params.segmentation_sheet))
-    ch_contrasts_file.splitCsv ( header:true, sep:(params.segmentation_sheet.endsWith('tsv') ? '\t' : ','))
-                    .flatMap().filter { !(it.toString().toUpperCase().contains("FALSE")) }
-                    .map { it ->
-                        if (it.toString().substring(0,2) == "id"){
-                            lhm = new LinkedHashMap()
-                            lhm['id'] = it.toString().split("=")[1]
-                            return lhm
-                        } else {
-                            return it.toString().split("=")[0]
-                        }
-                    }
-                    .collect().map { it.reverse() }.flatMap()
-                    .buffer { it instanceof LinkedHashMap }
-                    .map { it.reverse() }
-                    .set { ch_contrasts }
-    ch_contrasts.view()
+    .set{ ch_meta_samples }
 
-    ch_contrasts.join(ch_samples_compressed).flatMap()
-                .map { it ->
-                if ( it instanceof LinkedHashMap ){
-                    group_ls = new ArrayList()
-                    return it + [ groups: group_ls ]
-                } else if (it instanceof java.lang.String ){
-                    group_ls.add(it)
-                    return
-                } else if (it instanceof java.util.ArrayList ){
-                    return it
-                } else {
-                    return it
-                }
-                }
-                .map { it ->
-                    if (it instanceof LinkedHashMap){
-                        return [id: it.id, groups: it.groups.sort()]
-                    } else {
-                        return it
-                    }
-                }.collect(flat: false).map { it.reverse() }.flatMap()
-                .buffer { it instanceof LinkedHashMap }
-                .map { it.reverse() }
-                .set { ch_updated_meta }
-    ch_updated_meta.view()
+    ch_meta_samples.map { it -> it[0]}.view()
 
+    /*
     if (params.gene_identifier.toUpperCase() == "COMBINE"){
         ch_updated_features = FEATURE_NAMING(
-            ch_updated_meta.map { [ it[0], it[1],  it[2] ] },
+            ch_meta_samples.map { [ it[0], it[1],  it[2] ] },
         )
         ch_init_rds = MAKE_SEURAT (
         ch_updated_features.data.map{ [ it[0], it[1], it[2] ] },
