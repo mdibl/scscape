@@ -20,9 +20,6 @@ process GZIP {
 
     script:
     """
-    while true; do
-        sleep 1
-    done
     for file in ${sample_files}/*; do
         if [[ \$file != *".gz"* ]]; then
             gzip \$file
