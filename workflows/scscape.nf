@@ -86,10 +86,6 @@ workflow SCSCAPE {
             .map { meta, gz, orig, features -> [ meta, gz, features ] }
             .set {ch_samples_compressed}
 
-<<<<<<< Updated upstream
-
-=======
->>>>>>> Stashed changes
     def lhm = new LinkedHashMap()
     ch_contrasts_file = Channel.from(file(params.segmentation_sheet))
     ch_contrasts_file.splitJson(path: 'meta')
@@ -135,6 +131,7 @@ workflow SCSCAPE {
         return [meta, dataValues]
     }
     .view()
+    /*
     /*
     ch_contrasts_file = Channel.from(file(params.segmentation_sheet))
     ch_contrasts_file.splitCsv ( header:true, sep:(params.segmentation_sheet.endsWith('tsv') ? '\t' : ','))
