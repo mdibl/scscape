@@ -86,7 +86,10 @@ workflow SCSCAPE {
             .map { meta, gz, orig, features -> [ meta, gz, features ] }
             .set {ch_samples_compressed}
 
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
     def lhm = new LinkedHashMap()
     ch_contrasts_file = Channel.from(file(params.segmentation_sheet))
     ch_contrasts_file.splitJson(path: 'meta')
@@ -131,7 +134,29 @@ workflow SCSCAPE {
 
         return [meta, dataValues]
     }
+<<<<<<< Updated upstream
     .set{ ch_meta_samples }
+=======
+    .view()
+    /*
+    ch_contrasts_file = Channel.from(file(params.segmentation_sheet))
+    ch_contrasts_file.splitCsv ( header:true, sep:(params.segmentation_sheet.endsWith('tsv') ? '\t' : ','))
+                    .flatMap().filter { !(it.toString().toUpperCase().contains("FALSE")) }
+                    .map { it ->
+                        if (it.toString().substring(0,2) == "id"){
+                            lhm = new LinkedHashMap()
+                            lhm['id'] = it.toString().split("=")[1]
+                            return lhm
+                        } else {
+                            return it.toString().split("=")[0]
+                        }
+                    }
+                    .collect().map { it.reverse() }.flatMap()
+                    .buffer { it instanceof LinkedHashMap }
+                    .map { it.reverse() }
+                    .set { ch_contrasts }
+    ch_contrasts.view()
+>>>>>>> Stashed changes
 
     ch_meta_samples.map { it -> it[0]}.view()
 
