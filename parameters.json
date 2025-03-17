@@ -1,7 +1,6 @@
 {
 
-    "sample_sheet": "null",
-    "segmentation_sheet":"./segmentation.csv",
+    "input": "null",
     "outdir": "",
 
     "gene_identifier": "gene_id",

@@ -42,6 +42,8 @@ process FIND_DOUBLETS {
 
     perl -i -pe 's/"//g;s/\\[\\d\\d?\\d?\\] //g' 02_${meta.id}_DoubletsRmValidation.log
 
+    mv Rplots.pdf 02_${meta.id}_pK_Optimization.pdf
+
     grep -i -E "R version " 02_${meta.id}_DoubletsRmVersions.log | perl -pe 's/ version /: \\"/g;s/ \\(.*/\\"/g' >> 02_${meta.id}_FinalVersions.log
     perl -ne 'print if /other attached packages:/ .. /^\$/' 02_${meta.id}_DoubletsRmVersions.log | grep -v "other" | perl -pe 's/\\\\[.*]\\s+//g;s/\\s+/\\n/g' | grep -v "^\$" | perl -pe 's/_/: \\"/g;s/\$/\\"/' >> 02_${meta.id}_FinalVersions.log
 

@@ -1,0 +1,106 @@
+{
+  "meta": [
+    "id",
+    "age",
+    "sex",
+    "genotype"
+  ],
+  "groups": {
+    "HET": [
+      "1dpa",
+      "4dpa"
+    ],
+    "Old": [
+      "2dpa",
+      "4dpa"
+    ],
+    "WT": [
+      "0dpa",
+      "2dpa"
+    ],
+    "Young": [
+      "0dpa",
+      "1dpa"
+    ]
+  },
+  "integration_layers": {
+    "HET": {
+      "columns": []
+    },
+    "Old": {
+      "columns": []
+    },
+    "WT": {
+      "columns": []
+    },
+    "Young": {
+      "columns": []
+    }
+  },
+  "samples": {
+    "0dpa": {
+      "data": [
+        "assets/subset_test_data/0dpa/",
+        "auxillaryGeneFiles/danioRerio.aux.features.csv"
+      ],
+      "groups": [
+        "Young",
+        "WT"
+      ],
+      "meta_content": [
+        "0dpa",
+        "Young",
+        "M",
+        "WT"
+      ]
+    },
+    "1dpa": {
+      "data": [
+        "assets/subset_test_data/1dpa/",
+        "auxillaryGeneFiles/danioRerio.aux.features.csv"
+      ],
+      "groups": [
+        "Young",
+        "HET"
+      ],
+      "meta_content": [
+        "1dpa",
+        "Young",
+        "M",
+        "HET"
+      ]
+    },
+    "2dpa": {
+      "data": [
+        "assets/subset_test_data/2dpa/",
+        "auxillaryGeneFiles/danioRerio.aux.features.csv"
+      ],
+      "groups": [
+        "Old",
+        "WT"
+      ],
+      "meta_content": [
+        "2dpa",
+        "Old",
+        "M",
+        "WT"
+      ]
+    },
+    "4dpa": {
+      "data": [
+        "assets/subset_test_data/4dpa/",
+        "auxillaryGeneFiles/danioRerio.aux.features.csv"
+      ],
+      "groups": [
+        "Old",
+        "HET"
+      ],
+      "meta_content": [
+        "4dpa",
+        "Old",
+        "M",
+        "HET"
+      ]
+    }
+  }
+}
