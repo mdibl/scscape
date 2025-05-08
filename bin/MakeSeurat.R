@@ -62,6 +62,50 @@ params.min_cells <- as.integer(args[5])
 # Min Features
 params.min_features <- as.integer(args[6])
 
+# Meta Data
+params.meta_data <- args[7]
+
+message(params.meta_data)
+
+# ╔═══════════════╗
+# ╠═ META Object ═╣
+# ╚═══════════════╝
+
+toDict <- function(input_string) {
+    # Remove the outer brackets
+    input_string <- gsub("^\\[|\\]$", "", input_string)
+
+    # Split the string by commas, but not commas inside brackets
+    parts <- strsplit(input_string, ",\\s*(?![^\\[\\]]*\\])", perl = TRUE)[[1]]
+
+    result <- list()
+
+    for (part in parts) {
+        # Check if it contains a nested list
+        if (grepl("\\[.*\\]", part)) {
+            # Extract key and value separately
+            key <- gsub("^(.*?):\\[.*$", "\\1", part)
+            nested_value <- gsub("^.*?:\\[(.*?)\\]$", "\\1", part)
+
+            # Split nested values
+            nested_list <- strsplit(nested_value, ",\\s*")[[1]]
+            result[[key]] <- nested_list
+        } else {
+            # Regular key-value pair
+            key_value <- strsplit(part, ":")[[1]]
+            if (length(key_value) == 2) {
+                key <- trimws(key_value[1])
+                value <- trimws(key_value[2])
+                result[[key]] <- value
+            }
+        }
+    }
+
+    return(result)
+}
+
+meta <- toDict(params.meta_data)
+
 # ╔═══════════════════╗
 # ╠═ Subset Features ═╣
 # ╚═══════════════════╝
@@ -112,6 +156,16 @@ assign(Name10XAnnotated, get(params.sample_name)[which(rownames(get(params.sampl
 message("Creating Seurat Object")
 NameSO <- paste0("SO_",params.sample_name)
 assign(NameSO, CreateSeuratObject(counts = get(Name10XAnnotated), project = params.sample_name, min.cells = params.min_cells, min.features = params.min_features))
+
+# ╔═════════════════╗
+# ╠═ Add Meta Data ═╣
+# ╚═════════════════╝
+message("Adding Meta Data")
+SO <- get(NameSO)
+for (name in names(meta)){
+    SO[[name]] <- meta[[name]]
+}
+assign(NameSO, SO)
 
 # ╔══════════════════════╗
 # ╠═ Save Seurat Object ═╣

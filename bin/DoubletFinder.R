@@ -24,6 +24,7 @@ library(SeuratObject)
 library(ggplot2)
 library(DoubletFinder)
 library(findPC)
+library(glmGamPoi)
 
 # ╔══════════════════════╗
 # ╠═ Read in Parameters ═╣

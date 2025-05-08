@@ -37,6 +37,7 @@ process MAKE_SEURAT {
         ${meta.id} \\
         $min_cells \\
         $min_features \\
+        "$meta" \\
         ${args} 2>&1 | tee 00_${meta.id}_Execution.log
 
     perl -i -pe 's/"//g;s/\\[\\d\\d?\\d?\\] //g' 00_${meta.id}_InitialValidation.log
