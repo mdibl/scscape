@@ -188,10 +188,10 @@ dev.off()
 # ╠═ Subset via Metadata ═╣
 # ╚═══════════════════════╝
 message("Subsetting Seurat Object via Metadata")
-minNCount         <- quantile(get(NameSO)$nCount_RNA, probs = seq(0,1,0.05))[[paste0(params.ncount_lower, "%")]]
-minNFeature       <- quantile(get(NameSO)$nFeature_RNA, probs = seq(0,1,0.05))[[paste0(params.nfeature_lower, "%")]]
-maxNCount         <- quantile(get(NameSO)$nCount_RNA, probs = seq(0,1,0.05))[[paste0(params.ncount_upper, "%")]]
-maxNFeature       <- quantile(get(NameSO)$nFeature_RNA, probs = seq(0,1,0.05))[[paste0(params.nfeature_upper, "%")]]
+minNCount         <- quantile(get(NameSO)$nCount_RNA, probs = seq(0,1,0.01))[[paste0(params.ncount_lower, "%")]]
+minNFeature       <- quantile(get(NameSO)$nFeature_RNA, probs = seq(0,1,0.01))[[paste0(params.nfeature_lower, "%")]]
+maxNCount         <- quantile(get(NameSO)$nCount_RNA, probs = seq(0,1,0.01))[[paste0(params.ncount_upper, "%")]]
+maxNFeature       <- quantile(get(NameSO)$nFeature_RNA, probs = seq(0,1,0.01))[[paste0(params.nfeature_upper, "%")]]
 maxMitoPct        <- as.integer(params.mito_pct)
 
 print(minNFeature)

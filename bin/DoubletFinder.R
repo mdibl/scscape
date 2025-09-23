@@ -55,6 +55,10 @@ params.scaleMethod <- args[6]
 # ╔═════════════════════════════════╗
 # ╠═ Preparation for Find Doublets ═╣
 # ╚═════════════════════════════════╝
+
+# set future max
+options(future.globals.maxSize = 4 * 1024^3)  # 4 GiB
+
 message("Preparing for Find Doublets")
 # read in .rds
 samp <- readRDS(params.SeuratObject)
