@@ -1,0 +1,32 @@
+{
+  "samples": {
+    "0dpa": {
+      "data": [
+        "/Users/rgrindle/Desktop/mdibl/wd/nf-core-scscape/results/Sample_Processing/0dpa/Doublet_Detection/02_0dpa_DoubletsRmSO.rds",
+        "/Users/rgrindle/Desktop/mdibl/wd/nf-core-scscape/results/Sample_Processing/0dpa/subset.csv"
+      ],
+      "id": "0dpa"
+    },
+    "1dpa": {
+      "data": [
+        "/Users/rgrindle/Desktop/mdibl/wd/nf-core-scscape/results/Sample_Processing/1dpa/Doublet_Detection/02_1dpa_DoubletsRmSO.rds",
+        "/Users/rgrindle/Desktop/mdibl/wd/nf-core-scscape/results/Sample_Processing/1dpa/subset.csv"
+      ],
+      "id": "1dpa"
+    },
+    "2dpa": {
+      "data": [
+        "/Users/rgrindle/Desktop/mdibl/wd/nf-core-scscape/results/Sample_Processing/2dpa/Doublet_Detection/02_2dpa_DoubletsRmSO.rds",
+        "/Users/rgrindle/Desktop/mdibl/wd/nf-core-scscape/results/Sample_Processing/2dpa/subset.csv"
+      ],
+      "id": "2dpa"
+    },
+    "4dpa": {
+      "data": [
+        "/Users/rgrindle/Desktop/mdibl/wd/nf-core-scscape/results/Sample_Processing/4dpa/Doublet_Detection/02_4dpa_DoubletsRmSO.rds",
+        "/Users/rgrindle/Desktop/mdibl/wd/nf-core-scscape/results/Sample_Processing/4dpa/subset.csv"
+      ],
+      "id": "4dpa"
+    }
+  }
+}

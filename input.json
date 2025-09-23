@@ -1,0 +1,174 @@
+{
+    "meta": [
+      "id",
+      "Age",
+      "Sex",
+      "Genotype",
+      "Harvest Day",
+      "Purpose"
+    ],
+    "groups": {
+      "Female": [
+        "Sample_05",
+        "Sample_06",
+        "Sample_07",
+        "Sample_08"
+      ],
+      "Male": [
+        "Sample_01",
+        "Sample_02",
+        "Sample_03",
+        "Sample_04"
+      ]
+    },
+    "integration_layers": {
+      "Female": {
+        "columns": [
+          "Age"
+        ]
+      },
+      "Male": {
+        "columns": [
+          "Age"
+        ]
+      }
+    },
+    "samples": {
+      "Sample_01": {
+        "data": [
+          "<data_directory>",
+          "<file_directory>"
+        ],
+        "groups": [
+          "Male"
+        ],
+        "meta_content": [
+          "Sample_01",
+          "2 days",
+          "M",
+          "WT",
+          "Day 4",
+          "scRNAseq"
+        ]
+      },
+      "Sample_02": {
+        "data": [
+          "<data_directory>",
+          "<file_directory>"
+        ],
+        "groups": [
+          "Male"
+        ],
+        "meta_content": [
+          "Sample_02",
+          "2 days",
+          "M",
+          "HET",
+          "Day 4",
+          "scRNAseq"
+        ]
+      },
+      "Sample_03": {
+        "data": [
+          "<data_directory>",
+          "<file_directory>"
+        ],
+        "groups": [
+          "Male"
+        ],
+        "meta_content": [
+          "Sample_03",
+          "3 days",
+          "M",
+          "WT",
+          "Day 4",
+          "scRNAseq"
+        ]
+      },
+      "Sample_04": {
+        "data": [
+          "<data_directory>",
+          "<file_directory>"
+        ],
+        "groups": [
+          "Male"
+        ],
+        "meta_content": [
+          "Sample_04",
+          "3 days",
+          "M",
+          "HET",
+          "Day 4",
+          "scRNAseq"
+        ]
+      },
+      "Sample_05": {
+        "data": [
+          "<data_directory>",
+          "<file_directory>"
+        ],
+        "groups": [
+          "Female"
+        ],
+        "meta_content": [
+          "Sample_05",
+          "2 days",
+          "F",
+          "WT",
+          "Day 4",
+          "scRNAseq"
+        ]
+      },
+      "Sample_06": {
+        "data": [
+          "<data_directory>",
+          "<file_directory>"
+        ],
+        "groups": [
+          "Female"
+        ],
+        "meta_content": [
+          "Sample_06",
+          "2 days",
+          "F",
+          "HET",
+          "Day 4",
+          "scRNAseq"
+        ]
+      },
+      "Sample_07": {
+        "data": [
+          "<data_directory>",
+          "<file_directory>"
+        ],
+        "groups": [
+          "Female"
+        ],
+        "meta_content": [
+          "Sample_07",
+          "3 days",
+          "F",
+          "WT",
+          "Day 5",
+          "scRNAseq"
+        ]
+      },
+      "Sample_08": {
+        "data": [
+          "<data_directory>",
+          "<file_directory>"
+        ],
+        "groups": [
+          "Female"
+        ],
+        "meta_content": [
+          "Sample_08",
+          "3 days",
+          "F",
+          " HET",
+          "Day 5",
+          "scRNAseq"
+        ]
+      }
+    }
+  }
