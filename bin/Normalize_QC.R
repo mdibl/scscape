@@ -191,7 +191,7 @@ if (toupper(params.runMitoScore) == "FALSE"){
     print(vplot1)
     dev.off()
 } else {
-    vplot1 <- VlnPlot(get(NameSO), features = c("nCount_RNA","nFeature_RNA",),pt.size = -1)
+    vplot1 <- VlnPlot(get(NameSO), features = c("nCount_RNA","nFeature_RNA"),pt.size = -1)
     pdf(file = paste0(params.sample_name,'_preFilterQC.pdf'), title = paste0(params.sample_name,' PreFilter QC'), width = 11, height = 8.5)
     print(plot2)
     print(vplot1)
@@ -233,7 +233,7 @@ if (toupper(params.runMitoScore) == "FALSE"){
     print(vplot1)
     dev.off()
 } else {
-    vplot1 <- VlnPlot(get(NameSO), features = c("nCount_RNA","nFeature_RNA",),pt.size = -1)
+    vplot1 <- VlnPlot(get(NameSO), features = c("nCount_RNA","nFeature_RNA"),pt.size = -1)
     pdf(file = paste0(params.sample_name,'_preFilterQC.pdf'), title = paste0(params.sample_name,' PreFilter QC'), width = 11, height = 8.5)
     print(plot2)
     print(vplot1)
