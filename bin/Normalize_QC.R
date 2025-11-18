@@ -158,6 +158,8 @@ calcMT <- function(SO, regex) {
   return(SO)
 }
 
+message4 <- NULL
+
 if (toupper(params.runMitoScore) == "FALSE"){
     assign(NameSO, calcMT(get(NameSO), params.regexs))
 
