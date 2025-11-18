@@ -74,6 +74,9 @@ params.sample_name <- args[8]
 # Run CC Score
 params.runCCScore <- args[9]
 
+# Run Mito Score
+params.runMitoScore <- args[10]
+
 # ╔════════════════════╗
 # ╠═ CC Scoring Logic ═╣
 # ╚════════════════════╝
@@ -88,7 +91,7 @@ if (length(params.g2m_genes) == 0 | length(params.s_genes) == 0 ){
     }else{
         message2 <- "ERROR:NORMALIZE_QC:G2M or S gene list is empty -- Please fill both lists or leave them both empty (auto)"
         message(message2)
-        quit(status = 1)    
+        quit(status = 1)
     }
 }
 
@@ -110,12 +113,12 @@ if (length(params.g2m_genes) == 0 & length(params.s_genes) == 0){
     }else if (toupper(params.runCCScore) == "FALSE"){
         message3 <- "ERROR:NORMALIZE_QC:Cell Cycle Scores are not being regressed but gene list is provided"
         message(message3)
-        quit(status = 1)    
+        quit(status = 1)
     }
 }else {
     message3 <- "ERROR:NORMALIZE_QC:G2M or S gene list is empty -- Please fill both lists or leave them both empty"
     message(message3)
-    quit(status = 1)    
+    quit(status = 1)
 }
 
 # ╔════════════════════╗
@@ -133,7 +136,7 @@ if ( length(params.mito_genes) == 0){
   params.regexs <- c('MT-', 'mt-', 'Mt-')
 }else {
   params.regexs <- c(params.mito_genes)
-} 
+}
 
 calcMT <- function(SO, regex) {
     params.mito_genes
@@ -155,13 +158,17 @@ calcMT <- function(SO, regex) {
   return(SO)
 }
 
-assign(NameSO, calcMT(get(NameSO), params.regexs))
+if (params.runMitoScore.toupper() == "TRUE"){
+    assign(NameSO, calcMT(get(NameSO), params.regexs))
 
-message4 <- NULL
-if (sum(get(NameSO)@meta.data$percent.mt) == 0){
-  message4 <- "ERROR:NORMALIZE_QC:Mitochondrial genes do not match features.tsv file or had 0 expression recorded. -- Please ensure gene nomenclature is matching."
-  message(message4)
-  quit(status = 1)
+
+    message4 <- NULL
+    if (sum(get(NameSO)@meta.data$percent.mt) == 0){
+    message4 <- "ERROR:NORMALIZE_QC:Mitochondrial genes do not match features.tsv file or had 0 expression recorded. -- Please ensure gene nomenclature is matching."
+    message(message4)
+    quit(status = 1)
+    }
+
 }
 
 # ╔═══════════════════════════════════════════╗
@@ -175,14 +182,23 @@ assign(NameSO, FindVariableFeatures(get(NameSO)))
 # ╠═ Generate Pre-Filter Plots ═╣
 # ╚═════════════════════════════╝
 message("Generating Pre-Filter Plots")
-plot1 <- FeatureScatter(get(NameSO), feature1 = "nCount_RNA", feature2 = "percent.mt", shuffle = T)
 plot2 <- FeatureScatter(get(NameSO), feature1 = "nCount_RNA", feature2 = "nFeature_RNA", shuffle = T)
-vplot1 <- VlnPlot(get(NameSO), features = c("nCount_RNA","nFeature_RNA","percent.mt"),pt.size = -1)
+if (params.runMitoScore.toupper() == "TRUE"){
+    plot1 <- FeatureScatter(get(NameSO), feature1 = "nCount_RNA", feature2 = "percent.mt", shuffle = T)
+    vplot1 <- VlnPlot(get(NameSO), features = c("nCount_RNA","nFeature_RNA","percent.mt"),pt.size = -1)
+    pdf(file = paste0(params.sample_name,'_preFilterQC.pdf'), title = paste0(params.sample_name,' PreFilter QC'), width = 11, height = 8.5)
+    print(plot1 + plot2)
+    print(vplot1)
+    dev.off()
+} else {
+    vplot1 <- VlnPlot(get(NameSO), features = c("nCount_RNA","nFeature_RNA",),pt.size = -1)
+    pdf(file = paste0(params.sample_name,'_preFilterQC.pdf'), title = paste0(params.sample_name,' PreFilter QC'), width = 11, height = 8.5)
+    print(plot2)
+    print(vplot1)
+    dev.off()
+}
 
-pdf(file = paste0(params.sample_name,'_preFilterQC.pdf'), title = paste0(params.sample_name,' PreFilter QC'), width = 11, height = 8.5)
-print(plot1 + plot2)
-print(vplot1)
-dev.off()
+
 
 # ╔═══════════════════════╗
 # ╠═ Subset via Metadata ═╣
@@ -192,26 +208,37 @@ minNCount         <- quantile(get(NameSO)$nCount_RNA, probs = seq(0,1,0.05))[[pa
 minNFeature       <- quantile(get(NameSO)$nFeature_RNA, probs = seq(0,1,0.05))[[paste0(params.nfeature_lower, "%")]]
 maxNCount         <- quantile(get(NameSO)$nCount_RNA, probs = seq(0,1,0.05))[[paste0(params.ncount_upper, "%")]]
 maxNFeature       <- quantile(get(NameSO)$nFeature_RNA, probs = seq(0,1,0.05))[[paste0(params.nfeature_upper, "%")]]
-maxMitoPct        <- as.integer(params.mito_pct)
+
+if (params.runMitoScore.toupper() == "TRUE"){
+    maxMitoPct        <- as.integer(params.mito_pct)
+    assign(NameSO,subset(get(NameSO), subset = nFeature_RNA > minNFeature & nCount_RNA > minNCount & percent.mt < maxMitoPct & nFeature_RNA < maxNFeature & nCount_RNA < maxNCount))
+    print(maxMitoPct)
+} else {
+    assign(NameSO,subset(get(NameSO), subset = nFeature_RNA > minNFeature & nCount_RNA > minNCount  & nFeature_RNA < maxNFeature & nCount_RNA < maxNCount))
+}
 
 print(minNFeature)
 print(minNCount)
-print((get(NameSO)@meta.data$nCount)[(get(NameSO)@meta.data$nCount) < 3875])
-print(maxMitoPct)
-assign(NameSO,subset(get(NameSO), subset = nFeature_RNA > minNFeature & nCount_RNA > minNCount & percent.mt < maxMitoPct & nFeature_RNA < maxNFeature & nCount_RNA < maxNCount))
 
 # ╔══════════════════════════════╗
 # ╠═ Generate Post-Filter Plots ═╣
 # ╚══════════════════════════════╝
 message("Generating Post-Filter Plots")
-plot1 <- FeatureScatter(get(NameSO), feature1 = "nCount_RNA", feature2 = "percent.mt", shuffle = T)
 plot2 <- FeatureScatter(get(NameSO), feature1 = "nCount_RNA", feature2 = "nFeature_RNA", shuffle = T)
-vplot1 <- VlnPlot(get(NameSO), features = c("nCount_RNA","nFeature_RNA","percent.mt"),pt.size = -1)
-
-pdf(file = paste0(params.sample_name,'_postFilterQC.pdf'), title = paste0(params.sample_name,' PostFilter QC'), width = 11, height = 8.5)
-print(plot1 + plot2)
-print(vplot1)
-dev.off()
+if (params.runMitoScore.toupper() == "TRUE"){
+    plot1 <- FeatureScatter(get(NameSO), feature1 = "nCount_RNA", feature2 = "percent.mt", shuffle = T)
+    vplot1 <- VlnPlot(get(NameSO), features = c("nCount_RNA","nFeature_RNA","percent.mt"),pt.size = -1)
+    pdf(file = paste0(params.sample_name,'_preFilterQC.pdf'), title = paste0(params.sample_name,' PreFilter QC'), width = 11, height = 8.5)
+    print(plot1 + plot2)
+    print(vplot1)
+    dev.off()
+} else {
+    vplot1 <- VlnPlot(get(NameSO), features = c("nCount_RNA","nFeature_RNA",),pt.size = -1)
+    pdf(file = paste0(params.sample_name,'_preFilterQC.pdf'), title = paste0(params.sample_name,' PreFilter QC'), width = 11, height = 8.5)
+    print(plot2)
+    print(vplot1)
+    dev.off()
+}
 
 # ╔════════════════════════════════════════╗
 # ╠═ Cell Cycle Scoring & Rename Features ═╣
