@@ -183,8 +183,10 @@ workflow SCSCAPE {
         params.ncount_lower,
         params.ncount_upper,
         params.max_mito_pct,
-        params.vars_2_regress
+        params.vars_2_regress,
+        params.skip_mito_filtering
     )
+
     ch_updated_meta.map{ meta, data, gene_file ->
                             meta = [ id: meta.id, groups: meta.groups.sort() ]
                             return [ meta, data, gene_file ]

@@ -17,6 +17,7 @@ process NORMALIZE_QC {
     val ncount_upper
     val max_mito_pct
     val vars_2_regress
+    val run_mito_filtering
 
 
     output:
@@ -55,6 +56,7 @@ process NORMALIZE_QC {
         $rds \\
         ${meta.id} \\
         $run_cc_score \\
+        $run_mito_filtering \\
         ${args} 2>&1 | tee 01_${meta.id}_Execution.log
 
     perl -i -pe 's/"//g;s/\\[\\d\\d?\\d?\\] //g' 01_${meta.id}_NormQCValidation.log
