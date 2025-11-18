@@ -158,7 +158,7 @@ calcMT <- function(SO, regex) {
   return(SO)
 }
 
-if (toupper(params.runMitoScore) == "TRUE"){
+if (toupper(params.runMitoScore) == "FALSE"){
     assign(NameSO, calcMT(get(NameSO), params.regexs))
 
 
@@ -183,7 +183,7 @@ assign(NameSO, FindVariableFeatures(get(NameSO)))
 # ╚═════════════════════════════╝
 message("Generating Pre-Filter Plots")
 plot2 <- FeatureScatter(get(NameSO), feature1 = "nCount_RNA", feature2 = "nFeature_RNA", shuffle = T)
-if (toupper(params.runMitoScore) == "TRUE"){
+if (toupper(params.runMitoScore) == "FALSE"){
     plot1 <- FeatureScatter(get(NameSO), feature1 = "nCount_RNA", feature2 = "percent.mt", shuffle = T)
     vplot1 <- VlnPlot(get(NameSO), features = c("nCount_RNA","nFeature_RNA","percent.mt"),pt.size = -1)
     pdf(file = paste0(params.sample_name,'_preFilterQC.pdf'), title = paste0(params.sample_name,' PreFilter QC'), width = 11, height = 8.5)
@@ -209,7 +209,7 @@ minNFeature       <- quantile(get(NameSO)$nFeature_RNA, probs = seq(0,1,0.05))[[
 maxNCount         <- quantile(get(NameSO)$nCount_RNA, probs = seq(0,1,0.05))[[paste0(params.ncount_upper, "%")]]
 maxNFeature       <- quantile(get(NameSO)$nFeature_RNA, probs = seq(0,1,0.05))[[paste0(params.nfeature_upper, "%")]]
 
-if (toupper(params.runMitoScore) == "TRUE"){
+if (toupper(params.runMitoScore) == "FALSE"){
     maxMitoPct        <- as.integer(params.mito_pct)
     assign(NameSO,subset(get(NameSO), subset = nFeature_RNA > minNFeature & nCount_RNA > minNCount & percent.mt < maxMitoPct & nFeature_RNA < maxNFeature & nCount_RNA < maxNCount))
     print(maxMitoPct)
@@ -225,7 +225,7 @@ print(minNCount)
 # ╚══════════════════════════════╝
 message("Generating Post-Filter Plots")
 plot2 <- FeatureScatter(get(NameSO), feature1 = "nCount_RNA", feature2 = "nFeature_RNA", shuffle = T)
-if (toupper(params.runMitoScore) == "TRUE"){
+if (toupper(params.runMitoScore) == "FALSE"){
     plot1 <- FeatureScatter(get(NameSO), feature1 = "nCount_RNA", feature2 = "percent.mt", shuffle = T)
     vplot1 <- VlnPlot(get(NameSO), features = c("nCount_RNA","nFeature_RNA","percent.mt"),pt.size = -1)
     pdf(file = paste0(params.sample_name,'_preFilterQC.pdf'), title = paste0(params.sample_name,' PreFilter QC'), width = 11, height = 8.5)
