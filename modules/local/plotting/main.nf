@@ -15,6 +15,7 @@ process DISPLAY_REDUCTION {
     val resolutions
     val makeLoupe
     val integration_tool
+    val skip_mito_filtering
 
 
 
@@ -50,6 +51,7 @@ process DISPLAY_REDUCTION {
         $meta \
         $makeLoupe \
         $eula_agreement \
+        $skip_mito_filtering \
         ${args} 2>&1 | tee 08_${meta}_Execution.log
 
     perl -i -pe 's/"//g;s/\\[\\d\\d?\\d?\\] //g' 08_${meta}_PlotValidation.log
