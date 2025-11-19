@@ -225,7 +225,8 @@ workflow SCSCAPE {
 
     ch_merged_so = MERGE_SO (
         ch_merged_groups.multiple,
-        params.vars_2_regress
+        params.vars_2_regress,
+        params.skip_mito_filtering
     )
     ch_validation_log.mix(ch_merged_so.log).set{ ch_validation_log }
 
@@ -317,7 +318,8 @@ workflow SCSCAPE {
         ch_nn_clusters_w_log.map { it[1] },
         params.resolutions,
         params.makeLoupe,
-        params.integration_method
+        params.integration_method,
+        params.skip_mito_filtering
     )
     ch_validation_log.mix(DISPLAY_REDUCTION.out.log).set{ ch_validation_log }
 
