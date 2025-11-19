@@ -54,6 +54,8 @@ params.MakeLoupe <- args[6]
 # Loupe EULA
 params.10xEULA <- args[7]
 
+params.skip_mito <- args[8]
+
 # ╔════════════════════╗
 # ╠═ Load Seurat .rds ═╣
 # ╚════════════════════╝
@@ -84,55 +86,102 @@ BBCCDD
 # ╔══════════════════════════╗
 # ╠═ Plot Unintegrated UMAP ═╣
 # ╚══════════════════════════╝
-message("Generating Unintegrated UMAP Plots")
-p1 <- DimPlot(object = MergedSO, reduction = 'umap.unintegrated', pt.size =(-0.00007653*length(MergedSO$orig.ident))+4, label = T, group.by = "orig.ident", shuffle = T)
-p2 <- FeaturePlot(MergedSO, reduction = "umap.unintegrated", pt.size = (-0.00001837*length(MergedSO$orig.ident))+1, features = "nFeature_RNA", order = T) + scale_color_viridis(limits =c(min(MergedSO$nFeature_RNA),max(MergedSO$nFeature_RNA)), direction = -1)
-p3 <- FeaturePlot(MergedSO, reduction = "umap.unintegrated", pt.size = (-0.00001837*length(MergedSO$orig.ident))+1, features = "nCount_RNA", order = T) + scale_color_viridis(limits =c(min(MergedSO$nCount_RNA),max(MergedSO$nCount_RNA)), direction = -1)
-p4 <- FeaturePlot(MergedSO, reduction = "umap.unintegrated", pt.size = (-0.00001837*length(MergedSO$orig.ident))+1, features = "percent.mt", order = T) + scale_color_viridis(limits =c(min(MergedSO$percent.mt),max(MergedSO$percent.mt)), direction = -1)
+if (toupper(params.skip_mito) == "TRUE"){
+        message("Generating Unintegrated UMAP Plots")
+    p1 <- DimPlot(object = MergedSO, reduction = 'umap.unintegrated', pt.size =(-0.00007653*length(MergedSO$orig.ident))+4, label = T, group.by = "orig.ident", shuffle = T)
+    p2 <- FeaturePlot(MergedSO, reduction = "umap.unintegrated", pt.size = (-0.00001837*length(MergedSO$orig.ident))+1, features = "nFeature_RNA", order = T) + scale_color_viridis(limits =c(min(MergedSO$nFeature_RNA),max(MergedSO$nFeature_RNA)), direction = -1)
+    p3 <- FeaturePlot(MergedSO, reduction = "umap.unintegrated", pt.size = (-0.00001837*length(MergedSO$orig.ident))+1, features = "nCount_RNA", order = T) + scale_color_viridis(limits =c(min(MergedSO$nCount_RNA),max(MergedSO$nCount_RNA)), direction = -1)
 
-pdf(paste0(params.ProjectName,"UnintegratedUMAP.pdf"),width = 20, height = 15)
-p1 + p2 + p3 + p4 + plot_layout(design = Page1layout)
-try(expr = {DimPlot(object = MergedSO, reduction = 'umap.unintegrated', pt.size =(-0.00007653*length(MergedSO$orig.ident))+4, label = T, group.by = "CIscCATCH")})
-for (i in params.Resolutions){
-    print(DimPlot(object = MergedSO, reduction = 'umap.unintegrated', pt.size =(-0.00007653*length(MergedSO$orig.ident))+4, label = T, group.by = paste0("unintegratedRes.",i), shuffle = T))
+    pdf(paste0(params.ProjectName,"UnintegratedUMAP.pdf"),width = 20, height = 15)
+    p1 + p2 + p3 + plot_layout(design = Page1layout)
+    try(expr = {DimPlot(object = MergedSO, reduction = 'umap.unintegrated', pt.size =(-0.00007653*length(MergedSO$orig.ident))+4, label = T, group.by = "CIscCATCH")})
+    for (i in params.Resolutions){
+        print(DimPlot(object = MergedSO, reduction = 'umap.unintegrated', pt.size =(-0.00007653*length(MergedSO$orig.ident))+4, label = T, group.by = paste0("unintegratedRes.",i), shuffle = T))
+    }
+    dev.off()
+
+} else {
+    message("Generating Unintegrated UMAP Plots")
+    p1 <- DimPlot(object = MergedSO, reduction = 'umap.unintegrated', pt.size =(-0.00007653*length(MergedSO$orig.ident))+4, label = T, group.by = "orig.ident", shuffle = T)
+    p2 <- FeaturePlot(MergedSO, reduction = "umap.unintegrated", pt.size = (-0.00001837*length(MergedSO$orig.ident))+1, features = "nFeature_RNA", order = T) + scale_color_viridis(limits =c(min(MergedSO$nFeature_RNA),max(MergedSO$nFeature_RNA)), direction = -1)
+    p3 <- FeaturePlot(MergedSO, reduction = "umap.unintegrated", pt.size = (-0.00001837*length(MergedSO$orig.ident))+1, features = "nCount_RNA", order = T) + scale_color_viridis(limits =c(min(MergedSO$nCount_RNA),max(MergedSO$nCount_RNA)), direction = -1)
+    p4 <- FeaturePlot(MergedSO, reduction = "umap.unintegrated", pt.size = (-0.00001837*length(MergedSO$orig.ident))+1, features = "percent.mt", order = T) + scale_color_viridis(limits =c(min(MergedSO$percent.mt),max(MergedSO$percent.mt)), direction = -1)
+
+    pdf(paste0(params.ProjectName,"UnintegratedUMAP.pdf"),width = 20, height = 15)
+    p1 + p2 + p3 + p4 + plot_layout(design = Page1layout)
+    try(expr = {DimPlot(object = MergedSO, reduction = 'umap.unintegrated', pt.size =(-0.00007653*length(MergedSO$orig.ident))+4, label = T, group.by = "CIscCATCH")})
+    for (i in params.Resolutions){
+        print(DimPlot(object = MergedSO, reduction = 'umap.unintegrated', pt.size =(-0.00007653*length(MergedSO$orig.ident))+4, label = T, group.by = paste0("unintegratedRes.",i), shuffle = T))
+    }
+    dev.off()
 }
-dev.off()
 
 # ╔══════════════════════════╗
 # ╠═ Plot Unintegrated TSNE ═╣
 # ╚══════════════════════════╝
-message("Generating Unintegrated TSNE Plots")
-p1 <- DimPlot(object = MergedSO, reduction = 'tsne.unintegrated', pt.size =(-0.00007653*length(MergedSO$orig.ident))+4, label = T, group.by = "orig.ident", shuffle = T)
-p2 <- FeaturePlot(MergedSO, reduction = "tsne.unintegrated", pt.size = (-0.00001837*length(MergedSO$orig.ident))+1, features = "nFeature_RNA", order = T) + scale_color_viridis(limits =c(min(MergedSO$nFeature_RNA),max(MergedSO$nFeature_RNA)), direction = -1)
-p3 <- FeaturePlot(MergedSO, reduction = "tsne.unintegrated", pt.size = (-0.00001837*length(MergedSO$orig.ident))+1, features = "nCount_RNA", order = T) + scale_color_viridis(limits =c(min(MergedSO$nCount_RNA),max(MergedSO$nCount_RNA)), direction = -1)
-p4 <- FeaturePlot(MergedSO, reduction = "tsne.unintegrated", pt.size = (-0.00001837*length(MergedSO$orig.ident))+1, features = "percent.mt", order = T) + scale_color_viridis(limits =c(min(MergedSO$percent.mt),max(MergedSO$percent.mt)), direction = -1)
+if (toupper(params.skip_mito) == "TRUE"){
+    message("Generating Unintegrated TSNE Plots")
+    p1 <- DimPlot(object = MergedSO, reduction = 'tsne.unintegrated', pt.size =(-0.00007653*length(MergedSO$orig.ident))+4, label = T, group.by = "orig.ident", shuffle = T)
+    p2 <- FeaturePlot(MergedSO, reduction = "tsne.unintegrated", pt.size = (-0.00001837*length(MergedSO$orig.ident))+1, features = "nFeature_RNA", order = T) + scale_color_viridis(limits =c(min(MergedSO$nFeature_RNA),max(MergedSO$nFeature_RNA)), direction = -1)
+    p3 <- FeaturePlot(MergedSO, reduction = "tsne.unintegrated", pt.size = (-0.00001837*length(MergedSO$orig.ident))+1, features = "nCount_RNA", order = T) + scale_color_viridis(limits =c(min(MergedSO$nCount_RNA),max(MergedSO$nCount_RNA)), direction = -1)
 
-pdf(paste0(params.ProjectName,"UnintegratedTSNE.pdf"),width = 20, height = 15)
-p1 + p2 + p3 + p4 + plot_layout(design = Page1layout)
-try(expr = {DimPlot(object = MergedSO, reduction = 'tsne.unintegrated', pt.size =(-0.00007653*length(MergedSO$orig.ident))+4, label = T, group.by = "CIscCATCH")})
-for (i in params.Resolutions){
-    print(DimPlot(object = MergedSO, reduction = 'tsne.unintegrated', pt.size =(-0.00007653*length(MergedSO$orig.ident))+4, label = T, group.by = paste0("unintegratedRes.",i), shuffle = T))
+    pdf(paste0(params.ProjectName,"UnintegratedTSNE.pdf"),width = 20, height = 15)
+    p1 + p2 + p3 + plot_layout(design = Page1layout)
+    try(expr = {DimPlot(object = MergedSO, reduction = 'tsne.unintegrated', pt.size =(-0.00007653*length(MergedSO$orig.ident))+4, label = T, group.by = "CIscCATCH")})
+    for (i in params.Resolutions){
+        print(DimPlot(object = MergedSO, reduction = 'tsne.unintegrated', pt.size =(-0.00007653*length(MergedSO$orig.ident))+4, label = T, group.by = paste0("unintegratedRes.",i), shuffle = T))
+    }
+    dev.off()
+} else {
+    message("Generating Unintegrated TSNE Plots")
+    p1 <- DimPlot(object = MergedSO, reduction = 'tsne.unintegrated', pt.size =(-0.00007653*length(MergedSO$orig.ident))+4, label = T, group.by = "orig.ident", shuffle = T)
+    p2 <- FeaturePlot(MergedSO, reduction = "tsne.unintegrated", pt.size = (-0.00001837*length(MergedSO$orig.ident))+1, features = "nFeature_RNA", order = T) + scale_color_viridis(limits =c(min(MergedSO$nFeature_RNA),max(MergedSO$nFeature_RNA)), direction = -1)
+    p3 <- FeaturePlot(MergedSO, reduction = "tsne.unintegrated", pt.size = (-0.00001837*length(MergedSO$orig.ident))+1, features = "nCount_RNA", order = T) + scale_color_viridis(limits =c(min(MergedSO$nCount_RNA),max(MergedSO$nCount_RNA)), direction = -1)
+    p4 <- FeaturePlot(MergedSO, reduction = "tsne.unintegrated", pt.size = (-0.00001837*length(MergedSO$orig.ident))+1, features = "percent.mt", order = T) + scale_color_viridis(limits =c(min(MergedSO$percent.mt),max(MergedSO$percent.mt)), direction = -1)
+
+    pdf(paste0(params.ProjectName,"UnintegratedTSNE.pdf"),width = 20, height = 15)
+    p1 + p2 + p3 + p4 + plot_layout(design = Page1layout)
+    try(expr = {DimPlot(object = MergedSO, reduction = 'tsne.unintegrated', pt.size =(-0.00007653*length(MergedSO$orig.ident))+4, label = T, group.by = "CIscCATCH")})
+    for (i in params.Resolutions){
+        print(DimPlot(object = MergedSO, reduction = 'tsne.unintegrated', pt.size =(-0.00007653*length(MergedSO$orig.ident))+4, label = T, group.by = paste0("unintegratedRes.",i), shuffle = T))
+    }
+    dev.off()
 }
-dev.off()
 
 # ╔═════════════════════════════════╗
 # ╠═ Plot Integrated UMAP (if run) ═╣
 # ╚═════════════════════════════════╝
-pdf(paste0(params.ProjectName,params.IntegrationMethod,"IntegratedUMAP.pdf"),width = 20, height = 15)
+pdf(paste0(params.ProjectName,params.IntegrationMethod,"IntegratedUMAP.pdf"), width = 20, height = 15)
 if (params.IntegrationMethod != "NULL"){
-    message("Generating Integrated UMAP Plots")
-    p1 <- DimPlot(object = MergedSO, reduction = paste0("umap.",params.IntegrationMethod), pt.size =(-0.00007653*length(MergedSO$orig.ident))+4, label = T, group.by = "orig.ident", shuffle = T)
-    p2 <- FeaturePlot(MergedSO, reduction = paste0("umap.",params.IntegrationMethod), pt.size = (-0.00001837*length(MergedSO$orig.ident))+1, features = "nFeature_RNA", order = T) + scale_color_viridis(limits =c(min(MergedSO$nFeature_RNA),max(MergedSO$nFeature_RNA)), direction = -1)
-    p3 <- FeaturePlot(MergedSO, reduction = paste0("umap.",params.IntegrationMethod), pt.size = (-0.00001837*length(MergedSO$orig.ident))+1, features = "nCount_RNA", order = T) + scale_color_viridis(limits =c(min(MergedSO$nCount_RNA),max(MergedSO$nCount_RNA)), direction = -1)
-    p4 <- FeaturePlot(MergedSO, reduction = paste0("umap.",params.IntegrationMethod), pt.size = (-0.00001837*length(MergedSO$orig.ident))+1, features = "percent.mt", order = T) + scale_color_viridis(limits =c(min(MergedSO$percent.mt),max(MergedSO$percent.mt)), direction = -1)
+    if (toupper(params.skip_mito) == "TRUE"){
+        message("Generating Integrated UMAP Plots")
+        p1 <- DimPlot(object = MergedSO, reduction = paste0("umap.",params.IntegrationMethod), pt.size =(-0.00007653*length(MergedSO$orig.ident))+4, label = T, group.by = "orig.ident", shuffle = T)
+        p2 <- FeaturePlot(MergedSO, reduction = paste0("umap.",params.IntegrationMethod), pt.size = (-0.00001837*length(MergedSO$orig.ident))+1, features = "nFeature_RNA", order = T) + scale_color_viridis(limits =c(min(MergedSO$nFeature_RNA),max(MergedSO$nFeature_RNA)), direction = -1)
+        p3 <- FeaturePlot(MergedSO, reduction = paste0("umap.",params.IntegrationMethod), pt.size = (-0.00001837*length(MergedSO$orig.ident))+1, features = "nCount_RNA", order = T) + scale_color_viridis(limits =c(min(MergedSO$nCount_RNA),max(MergedSO$nCount_RNA)), direction = -1)
 
-    print(p1 + p2 + p3 + p4 + plot_layout(design = Page1layout))
-    try(expr = {print(DimPlot(object = MergedSO, reduction = paste0("umap.",params.IntegrationMethod), pt.size =(-0.00007653*length(MergedSO$orig.ident))+4, label = T, group.by = "CIscCATCH"))})
-    for (i in params.Resolutions){
-        print(DimPlot(object = MergedSO, reduction = paste0("umap.",params.IntegrationMethod), pt.size =(-0.00007653*length(MergedSO$orig.ident))+4, label = T, group.by = paste0(params.IntegrationMethod,"Res.",i)))
+        pdf(paste0(params.ProjectName,params.IntegrationMethod,"IntegratedUMAP.pdf"),width = 20, height = 15)
+        p1 + p2 + p3 + plot_layout(design = Page1layout)
+        try(expr = {print(DimPlot(object = MergedSO, reduction = paste0("umap.",params.IntegrationMethod), pt.size =(-0.00007653*length(MergedSO$orig.ident))+4, label = T, group.by = "CIscCATCH"))})
+        for (i in params.Resolutions){
+            print(DimPlot(object = MergedSO, reduction = paste0("umap.",params.IntegrationMethod), pt.size =(-0.00007653*length(MergedSO$orig.ident))+4, label = T, group.by = paste0(params.IntegrationMethod,"Res.",i)))
+        }
+        dev.off()
+
+    } else {
+        message("Generating Integrated UMAP Plots")
+        p1 <- DimPlot(object = MergedSO, reduction = paste0("umap.",params.IntegrationMethod), pt.size =(-0.00007653*length(MergedSO$orig.ident))+4, label = T, group.by = "orig.ident", shuffle = T)
+        p2 <- FeaturePlot(MergedSO, reduction = paste0("umap.",params.IntegrationMethod), pt.size = (-0.00001837*length(MergedSO$orig.ident))+1, features = "nFeature_RNA", order = T) + scale_color_viridis(limits =c(min(MergedSO$nFeature_RNA),max(MergedSO$nFeature_RNA)), direction = -1)
+        p3 <- FeaturePlot(MergedSO, reduction = paste0("umap.",params.IntegrationMethod), pt.size = (-0.00001837*length(MergedSO$orig.ident))+1, features = "nCount_RNA", order = T) + scale_color_viridis(limits =c(min(MergedSO$nCount_RNA),max(MergedSO$nCount_RNA)), direction = -1)
+        p4 <- FeaturePlot(MergedSO, reduction = paste0("umap.",params.IntegrationMethod), pt.size = (-0.00001837*length(MergedSO$orig.ident))+1, features = "percent.mt", order = T) + scale_color_viridis(limits =c(min(MergedSO$percent.mt),max(MergedSO$percent.mt)), direction = -1)
+
+        print(p1 + p2 + p3 + p4 + plot_layout(design = Page1layout))
+        try(expr = {print(DimPlot(object = MergedSO, reduction = paste0("umap.",params.IntegrationMethod), pt.size =(-0.00007653*length(MergedSO$orig.ident))+4, label = T, group.by = "CIscCATCH"))})
+        for (i in params.Resolutions){
+            print(DimPlot(object = MergedSO, reduction = paste0("umap.",params.IntegrationMethod), pt.size =(-0.00007653*length(MergedSO$orig.ident))+4, label = T, group.by = paste0(params.IntegrationMethod,"Res.",i)))
+        }
+        dev.off()
     }
 }
-dev.off()
 
 if(params.IntegrationMethod == "NULL"){
     file.remove(paste0(params.ProjectName,params.IntegrationMethod,"IntegratedUMAP.pdf"))
@@ -143,16 +192,29 @@ if(params.IntegrationMethod == "NULL"){
 # ╚═════════════════════════════════╝
 pdf(paste0(params.ProjectName,params.IntegrationMethod,"IntegratedTSNE.pdf"),width = 20, height = 15)
 if (params.IntegrationMethod != "NULL"){
-    message("Generating Integrated TSNE Plots")
-    p1 <- DimPlot(object = MergedSO, reduction = paste0("tsne.",params.IntegrationMethod), pt.size =(-0.00007653*length(MergedSO$orig.ident))+4, label = T, group.by = "orig.ident", shuffle = T)
-    p2 <- FeaturePlot(MergedSO, reduction = paste0("tsne.",params.IntegrationMethod), pt.size = (-0.00001837*length(MergedSO$orig.ident))+1, features = "nFeature_RNA", order = T) + scale_color_viridis(limits =c(min(MergedSO$nFeature_RNA),max(MergedSO$nFeature_RNA)), direction = -1)
-    p3 <- FeaturePlot(MergedSO, reduction = paste0("tsne.",params.IntegrationMethod), pt.size = (-0.00001837*length(MergedSO$orig.ident))+1, features = "nCount_RNA", order = T) + scale_color_viridis(limits =c(min(MergedSO$nCount_RNA),max(MergedSO$nCount_RNA)), direction = -1)
-    p4 <- FeaturePlot(MergedSO, reduction = paste0("tsne.",params.IntegrationMethod), pt.size = (-0.00001837*length(MergedSO$orig.ident))+1, features = "percent.mt", order = T) + scale_color_viridis(limits =c(min(MergedSO$percent.mt),max(MergedSO$percent.mt)), direction = -1)
+    if (toupper(params.skip_mito) == "TRUE"){
+        message("Generating Integrated TSNE Plots")
+        p1 <- DimPlot(object = MergedSO, reduction = paste0("tsne.",params.IntegrationMethod), pt.size =(-0.00007653*length(MergedSO$orig.ident))+4, label = T, group.by = "orig.ident", shuffle = T)
+        p2 <- FeaturePlot(MergedSO, reduction = paste0("tsne.",params.IntegrationMethod), pt.size = (-0.00001837*length(MergedSO$orig.ident))+1, features = "nFeature_RNA", order = T) + scale_color_viridis(limits =c(min(MergedSO$nFeature_RNA),max(MergedSO$nFeature_RNA)), direction = -1)
+        p3 <- FeaturePlot(MergedSO, reduction = paste0("tsne.",params.IntegrationMethod), pt.size = (-0.00001837*length(MergedSO$orig.ident))+1, features = "nCount_RNA", order = T) + scale_color_viridis(limits =c(min(MergedSO$nCount_RNA),max(MergedSO$nCount_RNA)), direction = -1)
 
-    print(p1 + p2 + p3 + p4 + plot_layout(design = Page1layout))
-    try(expr = {print(DimPlot(object = MergedSO, reduction = paste0("tsne.",params.IntegrationMethod), pt.size =(-0.00007653*length(MergedSO$orig.ident))+4, label = T, group.by = "CIscCATCH"))})
-    for (i in params.Resolutions){
-        print(DimPlot(object = MergedSO, reduction = paste0("tsne.",params.IntegrationMethod), pt.size =(-0.00007653*length(MergedSO$orig.ident))+4, label = T, group.by = paste0(params.IntegrationMethod,"Res.",i)))
+        print(p1 + p2 + p3 + plot_layout(design = Page1layout))
+        try(expr = {print(DimPlot(object = MergedSO, reduction = paste0("tsne.",params.IntegrationMethod), pt.size =(-0.00007653*length(MergedSO$orig.ident))+4, label = T, group.by = "CIscCATCH"))})
+        for (i in params.Resolutions){
+            print(DimPlot(object = MergedSO, reduction = paste0("tsne.",params.IntegrationMethod), pt.size =(-0.00007653*length(MergedSO$orig.ident))+4, label = T, group.by = paste0(params.IntegrationMethod,"Res.",i)))
+        }
+    } else {
+        message("Generating Integrated TSNE Plots")
+        p1 <- DimPlot(object = MergedSO, reduction = paste0("tsne.",params.IntegrationMethod), pt.size =(-0.00007653*length(MergedSO$orig.ident))+4, label = T, group.by = "orig.ident", shuffle = T)
+        p2 <- FeaturePlot(MergedSO, reduction = paste0("tsne.",params.IntegrationMethod), pt.size = (-0.00001837*length(MergedSO$orig.ident))+1, features = "nFeature_RNA", order = T) + scale_color_viridis(limits =c(min(MergedSO$nFeature_RNA),max(MergedSO$nFeature_RNA)), direction = -1)
+        p3 <- FeaturePlot(MergedSO, reduction = paste0("tsne.",params.IntegrationMethod), pt.size = (-0.00001837*length(MergedSO$orig.ident))+1, features = "nCount_RNA", order = T) + scale_color_viridis(limits =c(min(MergedSO$nCount_RNA),max(MergedSO$nCount_RNA)), direction = -1)
+        p4 <- FeaturePlot(MergedSO, reduction = paste0("tsne.",params.IntegrationMethod), pt.size = (-0.00001837*length(MergedSO$orig.ident))+1, features = "percent.mt", order = T) + scale_color_viridis(limits =c(min(MergedSO$percent.mt),max(MergedSO$percent.mt)), direction = -1)
+
+        print(p1 + p2 + p3 + p4 + plot_layout(design = Page1layout))
+        try(expr = {print(DimPlot(object = MergedSO, reduction = paste0("tsne.",params.IntegrationMethod), pt.size =(-0.00007653*length(MergedSO$orig.ident))+4, label = T, group.by = "CIscCATCH"))})
+        for (i in params.Resolutions){
+            print(DimPlot(object = MergedSO, reduction = paste0("tsne.",params.IntegrationMethod), pt.size =(-0.00007653*length(MergedSO$orig.ident))+4, label = T, group.by = paste0(params.IntegrationMethod,"Res.",i)))
+        }
     }
 }
 dev.off()

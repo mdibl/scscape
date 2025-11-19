@@ -44,6 +44,8 @@ params.scaleFeatures <- args[3]
 # Scale Options ( SD or default SCT)
 params.scaleMethod <- args[4]
 
+params.skip_mito <- args[5]
+
 
 # ╔════════════════════╗
 # ╠═ Load Seurat .rds ═╣
@@ -82,14 +84,24 @@ MergedSO <- NormalizeData(MergedSO)
 # ╠═ Generate Merged Post-Filter Plots ═╣
 # ╚═════════════════════════════════════╝
 message("Generating Merged Post-Filter Plots")
-plot1 <- FeatureScatter(MergedSO, feature1 = "nCount_RNA", feature2 = "percent.mt", shuffle = T, group.by = "orig.ident")
-plot2 <- FeatureScatter(MergedSO, feature1 = "nCount_RNA", feature2 = "nFeature_RNA", shuffle = T, group.by = "orig.ident")
-vplot1 <- VlnPlot(MergedSO, features = c("nCount_RNA","nFeature_RNA","percent.mt"),pt.size = -1, group.by = "orig.ident")
+if (toupper(params.skip_mito) == "TRUE"){
+    plot2 <- FeatureScatter(MergedSO, feature1 = "nCount_RNA", feature2 = "nFeature_RNA", shuffle = T, group.by = "orig.ident")
+    vplot1 <- VlnPlot(MergedSO, features = c("nCount_RNA","nFeature_RNA","percent.mt"),pt.size = -1, group.by = "orig.ident")
 
-pdf(file = paste0(params.ProjectName,'postMergeQC.pdf'), title = paste0(params.ProjectName,' Post Merge QC'), width = 11, height = 8.5)
-plot1 + plot2
-vplot1
-dev.off()
+    pdf(file = paste0(params.ProjectName,'postMergeQC.pdf'), title = paste0(params.ProjectName,' Post Merge QC'), width = 11, height = 8.5)
+    plot2
+    vplot1
+    dev.off()
+} else {
+    plot1 <- FeatureScatter(MergedSO, feature1 = "nCount_RNA", feature2 = "percent.mt", shuffle = T, group.by = "orig.ident")
+    plot2 <- FeatureScatter(MergedSO, feature1 = "nCount_RNA", feature2 = "nFeature_RNA", shuffle = T, group.by = "orig.ident")
+    vplot1 <- VlnPlot(MergedSO, features = c("nCount_RNA","nFeature_RNA","percent.mt"),pt.size = -1, group.by = "orig.ident")
+
+    pdf(file = paste0(params.ProjectName,'postMergeQC.pdf'), title = paste0(params.ProjectName,' Post Merge QC'), width = 11, height = 8.5)
+    plot1 + plot2
+    vplot1
+    dev.off()
+}
 
 # ╔══════════════════════════════╗
 # ╠═ Scale Merged Seurat Object ═╣
