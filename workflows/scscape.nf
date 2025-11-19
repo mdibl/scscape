@@ -232,7 +232,8 @@ workflow SCSCAPE {
 
     ch_scaled_so = SCALE_SO (
         ch_merged_groups.single,
-        params.vars_2_regress
+        params.vars_2_regress,
+        params.skip_mito_filtering
     )
     ch_validation_log.mix(ch_scaled_so.log).set{ ch_validation_log }
 
