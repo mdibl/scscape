@@ -52,7 +52,7 @@ message("Loading in Seurat Objects")
 SeuratRDSfiles <- list.files(pattern = "\\.rds$", ignore.case = T)
 SampleNames <- c()
 
-counter <- 1 
+counter <- 1
 for( file in SeuratRDSfiles){
     ObjName <- gsub("^02_","",gsub("_Doublets.*","", file))
     SampleNames <- append(SampleNames,ObjName)
@@ -94,6 +94,10 @@ dev.off()
 # ╔══════════════════════════════╗
 # ╠═ Scale Merged Seurat Object ═╣
 # ╚══════════════════════════════╝
+
+# set future max
+options(future.globals.maxSize = 4 * 1024^3)  # 4 GiB
+
 message("Scaling Merged Seurat Object")
 # create a list of all genes
 all.genes <- rownames(MergedSO)
