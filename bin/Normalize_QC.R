@@ -204,26 +204,10 @@ if (toupper(params.runMitoScore) == "FALSE"){
 SO <- get(NameSO)
 SO <- initialQC(SO)
 
-if (to.integer(params.ncount_lower) <= 0){
-    ncount_filter <- FALSE
-} else {
-    ncount_filter <- TRUE
-}
-if (to.integer(params.nfeature_lower) <= 0){
-    nfeature_filter <- FALSE
-} else {
-    nfeature_filter <- TRUE
-}
-if (toupper(params.runMitoScore) == "TRUE"){
-    mito_filter <- TRUE
-} else {
-    mito_filter <- FALSE
-}
-
 # Run ddqc metrics to cluster and remove MAD highly variable cells in the following 3 features:
 # nCount_RNA, nFeature_RNA, percent.mt
 pdf("ddqc_QCmetricPlots.pdf", width = 11, height = 8.5)
-df.qc <- ddqc.metrics(data, do.counts = ncount_filter, do.genes = nfeature_filter, do.mito = mito_filter)
+df.qc <- ddqc.metrics(data)
 dev.off()
 SO <- filterData(SO, df.qc)
 
