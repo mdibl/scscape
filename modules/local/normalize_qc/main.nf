@@ -11,10 +11,7 @@ process NORMALIZE_QC {
     input:
     tuple val(meta), path (rds)
     tuple val(meta), path (mt_cc_genes)
-    val nfeature_lower
-    val nfeature_upper
-    val ncount_lower
-    val ncount_upper
+    val mad_threshold
     val max_mito_pct
     val vars_2_regress
     val run_mito_filtering

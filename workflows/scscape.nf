@@ -178,10 +178,7 @@ workflow SCSCAPE {
     ch_normalized_qc = NORMALIZE_QC (
         ch_sorted_meta_norm_qc.map { [it[0], it[1]] },
         ch_sorted_meta_norm_qc.map { [it[0], it[2]] },
-        params.nfeature_lower,
-        params.nfeature_upper,
-        params.ncount_lower,
-        params.ncount_upper,
+        params.mad_threshold,
         params.max_mito_pct,
         params.vars_2_regress,
         params.skip_mito_filtering
