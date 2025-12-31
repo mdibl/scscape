@@ -54,28 +54,23 @@ try({
     params.s_genes <- params.s_genes[!(params.s_genes == "" | is.na(params.s_genes))]
 })
 
-# nFeature subset quantiles
-params.nfeature_lower <- args[2]
-params.nfeature_upper <- 100 - as.integer(args[3])
-
-# nCount subset quantiles
-params.ncount_lower <- args[4]
-params.ncount_upper <- 100 - as.integer(args[5])
+# The mean absolute deviation for thresholding ncount, nfeature, mito pct
+params.mad_threshold <- args[2]
 
 # Mito pct threshold
-params.mito_pct <- args[6]
+params.mito_pct <- args[3]
 
 # Seurat rds file
-params.SeuratObject <- args[7]
+params.SeuratObject <- args[4]
 
 # Sample Name
-params.sample_name <- args[8]
+params.sample_name <- args[5]
 
 # Run CC Score
-params.runCCScore <- args[9]
+params.runCCScore <- args[6]
 
 # Run Mito Score
-params.runMitoScore <- args[10]
+params.runMitoScore <- args[7]
 
 # ╔════════════════════╗
 # ╠═ CC Scoring Logic ═╣
@@ -127,6 +122,7 @@ if (length(params.g2m_genes) == 0 & length(params.s_genes) == 0){
 message("Loading Seurat Object")
 NameSO <- params.sample_name
 assign(NameSO, readRDS(params.SeuratObject))
+
 
 # ╔════════════════════╗
 # ╠═ Calculate Mito % ═╣
@@ -200,27 +196,60 @@ if (toupper(params.runMitoScore) == "FALSE"){
     dev.off()
 }
 
+# ╔══════════════════════════════════════════════════════════════════════════╗
+# ╠═ Run through ddqc workflow to determine variable thresholds on qc stats ═╣
+# ╚══════════════════════════════════════════════════════════════════════════╝
+
+# Remove obvious low quality cells
+SO <- get(NameSO)
+SO <- initialQC(SO)
+
+if (to.integer(params.ncount_lower) <= 0){
+    ncount_filter <- FALSE
+} else {
+    ncount_filter <- TRUE
+}
+if (to.integer(params.nfeature_lower) <= 0){
+    nfeature_filter <- FALSE
+} else {
+    nfeature_filter <- TRUE
+}
+if (toupper(params.runMitoScore) == "TRUE"){
+    mito_filter <- TRUE
+} else {
+    mito_filter <- FALSE
+}
+
+# Run ddqc metrics to cluster and remove MAD highly variable cells in the following 3 features:
+# nCount_RNA, nFeature_RNA, percent.mt
+pdf("ddqc_QCmetricPlots.pdf", width = 11, height = 8.5)
+df.qc <- ddqc.metrics(data, do.counts = ncount_filter, do.genes = nfeature_filter, do.mito = mito_filter)
+dev.off()
+SO <- filterData(SO, df.qc)
+
+assign(NameSO, SO)
+
 
 
 # ╔═══════════════════════╗
 # ╠═ Subset via Metadata ═╣
 # ╚═══════════════════════╝
-message("Subsetting Seurat Object via Metadata")
-minNCount         <- quantile(get(NameSO)$nCount_RNA, probs = seq(0,1,0.01))[[paste0(params.ncount_lower, "%")]]
-minNFeature       <- quantile(get(NameSO)$nFeature_RNA, probs = seq(0,1,0.01))[[paste0(params.nfeature_lower, "%")]]
-maxNCount         <- quantile(get(NameSO)$nCount_RNA, probs = seq(0,1,0.01))[[paste0(params.ncount_upper, "%")]]
-maxNFeature       <- quantile(get(NameSO)$nFeature_RNA, probs = seq(0,1,0.01))[[paste0(params.nfeature_upper, "%")]]
+#message("Subsetting Seurat Object via Metadata")
+#minNCount         <- quantile(get(NameSO)$nCount_RNA, probs = seq(0,1,0.01))[[paste0(params.ncount_lower, "%")]]
+#minNFeature       <- quantile(get(NameSO)$nFeature_RNA, probs = seq(0,1,0.01))[[paste0(params.nfeature_lower, "%")]]
+#maxNCount         <- quantile(get(NameSO)$nCount_RNA, probs = seq(0,1,0.01))[[paste0(params.ncount_upper, "%")]]
+#maxNFeature       <- quantile(get(NameSO)$nFeature_RNA, probs = seq(0,1,0.01))[[paste0(params.nfeature_upper, "%")]]
 
-if (toupper(params.runMitoScore) == "FALSE"){
-    maxMitoPct        <- as.integer(params.mito_pct)
-    assign(NameSO,subset(get(NameSO), subset = nFeature_RNA > minNFeature & nCount_RNA > minNCount & percent.mt < maxMitoPct & nFeature_RNA < maxNFeature & nCount_RNA < maxNCount))
-    print(maxMitoPct)
-} else {
-    assign(NameSO,subset(get(NameSO), subset = nFeature_RNA > minNFeature & nCount_RNA > minNCount  & nFeature_RNA < maxNFeature & nCount_RNA < maxNCount))
-}
+#if (toupper(params.runMitoScore) == "FALSE"){
+#    maxMitoPct        <- as.integer(params.mito_pct)
+#    assign(NameSO,subset(get(NameSO), subset = nFeature_RNA > minNFeature & nCount_RNA > minNCount & percent.mt < maxMitoPct & nFeature_RNA < maxNFeature & nCount_RNA < maxNCount))
+#    print(maxMitoPct)
+#} else {
+#    assign(NameSO,subset(get(NameSO), subset = nFeature_RNA > minNFeature & nCount_RNA > minNCount  & nFeature_RNA < maxNFeature & nCount_RNA < maxNCount))
+#}
 
-print(minNFeature)
-print(minNCount)
+#print(minNFeature)
+#print(minNCount)
 
 # ╔══════════════════════════════╗
 # ╠═ Generate Post-Filter Plots ═╣
