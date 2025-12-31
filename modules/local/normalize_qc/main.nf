@@ -48,10 +48,7 @@ process NORMALIZE_QC {
     """
     Normalize_QC.R \\
         $mt_cc_genes \\
-        $nfeature_lower \\
-        $nfeature_upper \\
-        $ncount_lower \\
-        $ncount_upper \\
+        $mad_threshold \\
         $max_mito_pct \\
         $rds \\
         ${meta.id} \\
