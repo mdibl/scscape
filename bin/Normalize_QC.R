@@ -24,6 +24,7 @@ library(SeuratObject)
 library(Seurat.utils)
 library(ggplot2)
 library(patchwork)
+library(ddqcR)
 
 # ╔══════════════════════╗
 # ╠═ Read in Parameters ═╣
