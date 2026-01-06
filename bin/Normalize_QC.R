@@ -305,10 +305,6 @@ cat("╔════════════════════════
 cat("╠  Normalize_QC.R Validation log\n")
 cat(paste0("╠  Sample: ", params.sample_name,"\n"))
 cat("╚══════════════════════════════════════════════════════════════════════════════════════════════╝\n")
-cat(paste0("\nMin nCount: ", minNCount))
-cat(paste0("\nMin nFeature: ", minNFeature))
-cat(paste0("\nMax nCount: ", maxNCount))
-cat(paste0("\nMax nFeature: ", maxNFeature))
 cat("\n")
 if (toupper(params.runCCScore) == "TRUE") {
 cat(paste0("\nPct G2M: " ,(length(which(get(NameSO)@meta.data$Phase == "G2M"))/length(colnames(get(NameSO))))))
