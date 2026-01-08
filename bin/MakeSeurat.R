@@ -94,6 +94,10 @@ if (length(params.genes_2_rm) == 0){
   }
 }
 
+new_feat_list$V1 <- make.unique(new_feat_list$V1)
+new_feat_list$V2 <- make.unique(new_feat_list$V2)
+new_feat_list$V3 <- make.unique(new_feat_list$V3)
+
 # ╔════════════════════════════════╗
 # ╠═ Create 10X Object and Subset ═╣
 # ╚════════════════════════════════╝
