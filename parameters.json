@@ -8,10 +8,6 @@
     "min_cells": 3,
     "min_features": 200,
 
-    "nfeature_lower": null,
-    "nfeature_upper": 0,
-    "ncount_lower": null,
-    "ncount_upper": 0,
     "max_mito_pct": null,
 
     "vars_2_regress": "nCount_RNA,nFeature_RNA,percent.mt,S.Score,G2M.Score",

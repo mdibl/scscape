@@ -57,7 +57,9 @@ Then we need to run `ddqc.metrics` <br>
 This function will not filter the Seurat object itself, but will return a data.frame with filtering statistics
 
 ```{r}
+pdf("ddqc_plots.pdf")
 df.qc <- ddqc.metrics(data)
+dev.off()
 ```
 ### Outputs
 There are two boxplots provided for exploratory data analysis:
