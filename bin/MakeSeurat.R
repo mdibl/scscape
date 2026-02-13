@@ -66,32 +66,43 @@ params.min_features <- as.integer(args[6])
 # ╠═ Subset Features ═╣
 # ╚═══════════════════╝
 message("Subsetting Features")
+
+# Determine correct path to features file
+if (substr(params.data_directory, nchar(params.data_directory), nchar(params.data_directory)) == "/"){
+    feature_list <- read.csv(paste0(params.data_directory, "features.tsv.gz"), sep = "\t", header = F)
+} else {
+    feature_list <- read.csv(paste0(params.data_directory, "/features.tsv.gz"), sep = "\t", header = F)
+}
+
+# Remove genes if removal list is provided
 if (length(params.genes_2_rm) == 0){
-  if (substr(params.data_directory, nchar(params.data_directory), nchar(params.data_directory)) == "/"){
-    feature_list  <- read.csv(paste0(params.data_directory, "features.tsv.gz"), sep = "\t", header = F)
     new_feat_list <- feature_list
-  }else {
-    feature_list  <- read.csv(paste0(params.data_directory, "/features.tsv.gz"), sep = "\t", header = F)
-    new_feat_list <- feature_list
-  }
-}else{
-  if (substr(params.data_directory, nchar(params.data_directory), nchar(params.data_directory)) == "/"){
-    gene_list     <- params.genes_2_rm
-    feature_list  <- read.csv(paste0(params.data_directory, "features.tsv.gz"), sep = "\t", header = F)
+    message("No gene removal list provided - keeping all features")
+} else {
+    gene_list <- params.genes_2_rm
+    
+    # Match removal list against the same column being used for gene identifiers
     if (params.gene_column == 1){
-        new_feat_list <- feature_list[-c(which(feature_list$V1 %in% gene_list)),]
-    }else{
-        new_feat_list <- feature_list[-c(which(feature_list$V2 %in% gene_list)),]
+        genes_to_remove <- which(feature_list$V1 %in% gene_list)
+        message(paste0("Matching removal list against column 1 (gene_id)"))
+    } else {
+        genes_to_remove <- which(feature_list$V2 %in% gene_list)
+        message(paste0("Matching removal list against column 2 (gene_name)"))
     }
-  }else{
-    gene_list     <- params.genes_2_rm
-    feature_list  <- read.csv(paste0(params.data_directory, "/features.tsv.gz"), sep = "\t", header = F)
-    if (params.gene_column == 1){
-        new_feat_list <- feature_list[-c(which(feature_list$V1 %in% gene_list)),]
-    }else{
-        new_feat_list <- feature_list[-c(which(feature_list$V2 %in% gene_list)),]
+    
+    message(paste0("Total features in dataset: ", nrow(feature_list)))
+    message(paste0("Genes in removal list: ", length(gene_list)))
+    message(paste0("Matching features to remove: ", length(genes_to_remove)))
+    
+    # Only subset if there are actually genes to remove
+    # This prevents the -c(integer(0)) bug that removes all rows
+    if (length(genes_to_remove) > 0) {
+        new_feat_list <- feature_list[-genes_to_remove, ]
+        message(paste0("Features remaining after removal: ", nrow(new_feat_list)))
+    } else {
+        new_feat_list <- feature_list
+        message("WARNING: No matching features found in removal list - keeping all features")
     }
-  }
 }
 
 new_feat_list$V1 <- make.unique(new_feat_list$V1)
