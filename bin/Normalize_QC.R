@@ -208,7 +208,7 @@ SO <- initialQC(SO)
 # Run ddqc metrics to cluster and remove MAD highly variable cells in the following 3 features:
 # nCount_RNA, nFeature_RNA, percent.mt
 pdf("ddqc_QCmetricPlots.pdf", width = 11, height = 8.5)
-df.qc <- ddqc.metrics(SO, threshold = params.mad_threshold)
+df.qc <- ddqc.metrics(SO, threshold = as.numeric(params.mad_threshold))
 dev.off()
 SO <- filterData(SO, df.qc)
 
