@@ -212,6 +212,12 @@ df.qc <- ddqc.metrics(SO, threshold = as.numeric(params.mad_threshold))
 dev.off()
 SO <- filterData(SO, df.qc)
 
+#Write out csv file of all cells
+writeOut <- df.qc
+writeOut$barcodes <- paste0(NameSO,"_",rownames(writeOut))
+writeOut <- writeOut[, c(ncol(writeOut), 1:(ncol(writeOut)-1))]
+write.csv(writeOut, paste0(NameSO, "_AllBarcodes.ddqcR.csv"), row.names = FALSE)
+
 #Write out csv file of cells that are removed, and for what reason they are being removed
 removed <- df.qc[!df.qc$nCount_RNA.passed.qc | !df.qc$nFeature_RNA.passed.qc | !df.qc$percent.mt.passed.qc, ]
 removed$barcodes <- paste0(NameSO,"_",rownames(removed))
