@@ -200,7 +200,7 @@ if (toupper(params.runMitoScore) == "FALSE"){
 # ╔══════════════════════════════════════════════════════════════════════════╗
 # ╠═ Run through ddqc workflow to determine variable thresholds on qc stats ═╣
 # ╚══════════════════════════════════════════════════════════════════════════╝
-
+message("Running ddqcR")
 # Remove obvious low quality cells
 SO <- get(NameSO)
 SO <- initialQC(SO)
@@ -208,7 +208,11 @@ SO <- initialQC(SO)
 # Run ddqc metrics to cluster and remove MAD highly variable cells in the following 3 features:
 # nCount_RNA, nFeature_RNA, percent.mt
 pdf("ddqc_QCmetricPlots.pdf", width = 11, height = 8.5)
-df.qc <- ddqc.metrics(SO, threshold = as.numeric(params.mad_threshold))
+if (toupper(params.runMitoScore) == "FALSE"){
+    df.qc <- ddqc.metrics(SO, threshold = as.numeric(params.mad_threshold), do.mito = FALSE)
+}else{
+    df.qc <- ddqc.metrics(SO, threshold = as.numeric(params.mad_threshold))
+}
 dev.off()
 SO <- filterData(SO, df.qc)
 
@@ -217,12 +221,6 @@ writeOut <- df.qc
 writeOut$barcodes <- paste0(NameSO,"_",rownames(writeOut))
 writeOut <- writeOut[, c(ncol(writeOut), 1:(ncol(writeOut)-1))]
 write.csv(writeOut, paste0(NameSO, "_AllBarcodes.ddqcR.csv"), row.names = FALSE)
-
-#Write out csv file of cells that are removed, and for what reason they are being removed
-removed <- df.qc[!df.qc$nCount_RNA.passed.qc | !df.qc$nFeature_RNA.passed.qc | !df.qc$percent.mt.passed.qc, ]
-removed$barcodes <- paste0(NameSO,"_",rownames(removed))
-removed <- removed[, c(ncol(removed), 1:(ncol(removed)-1))]
-write.csv(removed, paste0(NameSO, "_RemovedBarcodes.ddqcR.csv"), row.names = FALSE)
 
 assign(NameSO, SO)
 
