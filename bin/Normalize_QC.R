@@ -71,7 +71,7 @@ params.sample_name <- args[5]
 params.runCCScore <- args[6]
 
 # Run Mito Score
-params.runMitoScore <- args[7]
+params.skipMito <- args[7]
 
 # ╔════════════════════╗
 # ╠═ CC Scoring Logic ═╣
@@ -157,7 +157,7 @@ calcMT <- function(SO, regex) {
 
 message4 <- NULL
 
-if (toupper(params.runMitoScore) == "FALSE"){
+if (toupper(params.skipMito) == "FALSE"){
     assign(NameSO, calcMT(get(NameSO), params.regexs))
 
 
@@ -182,7 +182,7 @@ assign(NameSO, FindVariableFeatures(get(NameSO)))
 # ╚═════════════════════════════╝
 message("Generating Pre-Filter Plots")
 plot2 <- FeatureScatter(get(NameSO), feature1 = "nCount_RNA", feature2 = "nFeature_RNA", shuffle = T)
-if (toupper(params.runMitoScore) == "FALSE"){
+if (toupper(params.skipMito) == "FALSE"){
     plot1 <- FeatureScatter(get(NameSO), feature1 = "nCount_RNA", feature2 = "percent.mt", shuffle = T)
     vplot1 <- VlnPlot(get(NameSO), features = c("nCount_RNA","nFeature_RNA","percent.mt"),pt.size = -1)
     pdf(file = paste0(params.sample_name,'_preFilterQC.pdf'), title = paste0(params.sample_name,' PreFilter QC'), width = 11, height = 8.5)
@@ -208,10 +208,10 @@ SO <- initialQC(SO)
 # Run ddqc metrics to cluster and remove MAD highly variable cells in the following 3 features:
 # nCount_RNA, nFeature_RNA, percent.mt
 pdf("ddqc_QCmetricPlots.pdf", width = 11, height = 8.5)
-if (toupper(params.runMitoScore) == "FALSE"){
-    df.qc <- ddqc.metrics(SO, threshold = as.numeric(params.mad_threshold), do.mito = FALSE)
-}else{
+if (toupper(params.skipMito) == "FALSE"){
     df.qc <- ddqc.metrics(SO, threshold = as.numeric(params.mad_threshold))
+}else{
+    df.qc <- ddqc.metrics(SO, threshold = as.numeric(params.mad_threshold), do.mito = FALSE)
 }
 dev.off()
 SO <- filterData(SO, df.qc)
@@ -235,7 +235,7 @@ assign(NameSO, SO)
 #maxNCount         <- quantile(get(NameSO)$nCount_RNA, probs = seq(0,1,0.01))[[paste0(params.ncount_upper, "%")]]
 #maxNFeature       <- quantile(get(NameSO)$nFeature_RNA, probs = seq(0,1,0.01))[[paste0(params.nfeature_upper, "%")]]
 
-#if (toupper(params.runMitoScore) == "FALSE"){
+#if (toupper(params.skipMito) == "FALSE"){
 #    maxMitoPct        <- as.integer(params.mito_pct)
 #    assign(NameSO,subset(get(NameSO), subset = nFeature_RNA > minNFeature & nCount_RNA > minNCount & percent.mt < maxMitoPct & nFeature_RNA < maxNFeature & nCount_RNA < maxNCount))
 #    print(maxMitoPct)
@@ -251,7 +251,7 @@ assign(NameSO, SO)
 # ╚══════════════════════════════╝
 message("Generating Post-Filter Plots")
 plot2 <- FeatureScatter(get(NameSO), feature1 = "nCount_RNA", feature2 = "nFeature_RNA", shuffle = T)
-if (toupper(params.runMitoScore) == "FALSE"){
+if (toupper(params.skipMito) == "FALSE"){
     plot1 <- FeatureScatter(get(NameSO), feature1 = "nCount_RNA", feature2 = "percent.mt", shuffle = T)
     vplot1 <- VlnPlot(get(NameSO), features = c("nCount_RNA","nFeature_RNA","percent.mt"),pt.size = -1)
     pdf(file = paste0(params.sample_name,'_preFilterQC.pdf'), title = paste0(params.sample_name,' PreFilter QC'), width = 11, height = 8.5)
