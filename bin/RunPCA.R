@@ -40,11 +40,21 @@ params.pcMax <- args[2]
 # Sample Name
 params.ProjectName <- args[3]
 
+# Features to use
+params.scaleFeatures <- args[4]
+
 # ╔═══════════╗
 # ╠═ Run PCA ═╣
 # ╚═══════════╝
 message("Running PCA")
-MergedSO <- RunPCA(MergedSO, npcs = 100)
+if (toupper(params.scaleFeatures) == "ALL"){
+    all.genes <- rownames(MergedSO)
+    MergedSO <- RunPCA(MergedSO, npcs = 100, features = all.genes)
+    message(paste0("PCA run on ALL features: ", length(all.genes)))
+} else {
+    MergedSO <- RunPCA(MergedSO, npcs = 100)
+    message(paste0("PCA run on variable features: ", length(VariableFeatures(MergedSO))))
+}
 
 # ╔═══════════════╗
 # ╠═ Find PC Max ═╣
@@ -113,9 +123,9 @@ y = ElbowPoints$stdev
 df <- data.frame(x,y)
 
 pdf(paste0(params.ProjectName,"_Merged_ElbowPlot.pdf"), width = 20, height = 15)
-ggplot(df, aes(x, y)) +
+ggplot(df, aes(x, log(y))) +
   geom_point() +
-  geom_line(aes(x = seq(1,100), y = ElbowPoints[[ident]]), color = "green") +
+  geom_line(aes(x = seq(1,100), y = log(ElbowPoints[[ident]])), color = "green") +
   xlab("PC") +
   ylab("Std Dev") +
   geom_vline(xintercept = params.pcMax, linetype="dotted", 

@@ -68,19 +68,19 @@ all.genes <- rownames(samp)
 # Scale Data and PCA
 if (params.scaleMethod == "SD"){
     if (params.scaleFeatures == "ALL"){
-        samp <- ScaleData(samp, features = all.genes ,vars.to.regress = params.VarsToRegress)
-        samp <- RunPCA(samp ,npcs = 100)
-    }else{
+        samp <- ScaleData(samp, features = all.genes, vars.to.regress = params.VarsToRegress)
+        samp <- RunPCA(samp, npcs = 100, features = all.genes)
+    } else {
         samp <- ScaleData(samp, vars.to.regress = params.VarsToRegress)
-        samp <- RunPCA(samp ,npcs = 100)
+        samp <- RunPCA(samp, npcs = 100)
     }
-}else{
+} else {
     if (params.scaleFeatures == "ALL"){
-        samp <- SCTransform(samp, vars.to.regress = params.VarsToRegress, return.only.var.genes = F )
-        samp <- RunPCA(samp ,npcs = 100)
-    }else{
+        samp <- SCTransform(samp, vars.to.regress = params.VarsToRegress, return.only.var.genes = FALSE)
+        samp <- RunPCA(samp, npcs = 100, features = rownames(samp))
+    } else {
         samp <- SCTransform(samp, vars.to.regress = params.VarsToRegress)
-        samp <- RunPCA(samp,  npcs = 100)
+        samp <- RunPCA(samp, npcs = 100)
     }
 }
 
