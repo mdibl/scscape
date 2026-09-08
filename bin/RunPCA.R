@@ -115,7 +115,7 @@ if (toupper(params.pcMax) == "NULL"){
     params.pcMax <- mean(x = c(pc_tbl[1,2], pc_tbl[1,3], pc_tbl[1,4]))
     params.pcMax <- ceiling(params.pcMax)
 }else{
-  params.pcMax
+  params.pcMax <- as.numeric(params.pcMax)
 }
 
 x = ElbowPoints$dims
@@ -154,9 +154,13 @@ cat("Loess Summary: \n")
 print(my_summary)
 cat("\n")
 cat("PC cutoff calculations:\n")
-cat(paste0("First Derivative : ", pc_tbl[1,2], "\n"))
-cat(paste0("Second Derivative : ", pc_tbl[1,3], "\n"))
-cat(paste0("Preceding Residual : ", pc_tbl[1,4], "\n"))
+if (exists("pc_tbl")) {
+  cat(paste0("First Derivative : ", pc_tbl[1,2], "\n"))
+  cat(paste0("Second Derivative : ", pc_tbl[1,3], "\n"))
+  cat(paste0("Preceding Residual : ", pc_tbl[1,4], "\n"))
+} else {
+  cat("User-specified pcMax; derivative calculations not run.\n")
+}
 cat("\n")
 cat(paste0("PCs used: 1 - ", params.pcMax,"\n"))
 sink()
