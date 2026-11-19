@@ -104,6 +104,10 @@ workflow SCSCAPE {
                     .map { it.reverse() }
                     .set { ch_contrasts }
 
+    // local, not a script-binding global: assigning an undeclared variable inside an
+    // operator closure writes the shared workflow binding and can throw
+    // ConcurrentModificationException when cached tasks emit concurrently (seen on -resume)
+    def group_ls = null
     ch_contrasts.join(ch_samples_compressed).flatMap()
                 .map { it ->
                 if ( it instanceof LinkedHashMap ){
