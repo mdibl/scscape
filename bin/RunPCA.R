@@ -105,7 +105,9 @@ if (toupper(params.pcMax) == "NULL"){
     params.pcMax <- mean(x = c(pc_tbl[1,2], pc_tbl[1,3], pc_tbl[1,4]))
     params.pcMax <- ceiling(params.pcMax)
 }else{
-  params.pcMax
+  # args arrive as character; a user-supplied pcMax must be numeric for
+  # geom_vline(xintercept=) below ("Discrete values supplied to continuous scale")
+  params.pcMax <- as.integer(params.pcMax)
 }
 
 x = ElbowPoints$dims
