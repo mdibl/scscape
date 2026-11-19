@@ -108,6 +108,8 @@ if (toupper(params.pcMax) == "NULL"){
   # args arrive as character; a user-supplied pcMax must be numeric for
   # geom_vline(xintercept=) below ("Discrete values supplied to continuous scale")
   params.pcMax <- as.integer(params.pcMax)
+  # findPC is skipped, but the validation log below still reports pc_tbl
+  pc_tbl <- data.frame(method = "user-supplied", first = NA, second = NA, residual = NA)
 }
 
 x = ElbowPoints$dims
