@@ -92,7 +92,7 @@ workflow SCSCAPE {
                     .flatMap().filter { !(it.toString().toUpperCase().contains("FALSE")) }
                     .map { it ->
                         if (it.toString().substring(0,2) == "id"){
-                            lhm = new LinkedHashMap()
+                            def lhm = new LinkedHashMap()
                             lhm['id'] = it.toString().split("=")[1]
                             return lhm
                         } else {
@@ -253,7 +253,7 @@ workflow SCSCAPE {
 
     ch_pca_single_updated.map { meta, rds, logs ->
                             if (true) {
-                                new_meta = new LinkedHashMap()
+                                def new_meta = new LinkedHashMap()
                                 new_meta['group'] = meta
                                 new_meta['integrated'] = false
                                 return [ new_meta, rds, logs ]
@@ -271,7 +271,7 @@ workflow SCSCAPE {
         ch_integrated.rds.join(ch_pca_multiple.log).set { ch_integrated_all }
         ch_integrated_all.map { meta, rds, logs ->
                                     if (true) {
-                                        new_meta = new LinkedHashMap()
+                                        def new_meta = new LinkedHashMap()
                                         new_meta['group'] = meta
                                         new_meta['integrated'] = true
                                         return [ new_meta, rds, logs ]
@@ -284,7 +284,7 @@ workflow SCSCAPE {
     } else {
         ch_pca_multiple.rds.map { meta, rds, logs ->
                                     if (true) {
-                                        new_meta = new LinkedHashMap()
+                                        def new_meta = new LinkedHashMap()
                                         new_meta['group'] = meta
                                         new_meta['integrated'] = false
                                         return [ new_meta, rds, logs ]
